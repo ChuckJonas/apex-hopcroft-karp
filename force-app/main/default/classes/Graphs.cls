@@ -45,10 +45,10 @@ public abstract class Graphs
     public static Edge addEdge(Graph g, String sourceVertex, String targetVertex, double weight)
     {
         //Supplier<E> edgeSupplier = g.getEdgeSupplier();
-        if (edgeSupplier == null) {
-            throw new UnsupportedOperationException('Graph contains no edge supplier');
-        }
-        Edge e = edgeSupplier.get();
+        //if (edgeSupplier == null) {
+        //    throw new UnsupportedOperationException('Graph contains no edge supplier');
+        //}
+        Edge e = new Edge(sourceVertex, targetVertex);
 
         if (g.addEdge(sourceVertex, targetVertex, e)) {
             g.setEdgeWeight(e, weight);
@@ -265,6 +265,8 @@ public abstract class Graphs
      
      * @see AsUndirectedGraph
      */
+
+     /*
     public static Graph undirectedGraph(Graph g)
     {
         if (g.getType().isDirected()) {
@@ -275,7 +277,7 @@ public abstract class Graphs
             throw new IllegalArgumentException('graph must be either directed or undirected');
         }
     }
-
+    */
     /**
      * Tests whether an edge is incident to a vertex.
      */
