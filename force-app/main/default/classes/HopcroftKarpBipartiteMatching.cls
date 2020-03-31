@@ -64,7 +64,7 @@ public class HopcroftKarpBipartiteMatching {
   private Integer[] dist;
 
   /* queue used for breadth first search */
-  private FixedSizeIntegerQueue queue;
+  private Queue queue;
 
   /**
    * Constructs a new instance of the Hopcroft Karp bipartite matching algorithm. The input graph
@@ -106,7 +106,7 @@ public class HopcroftKarpBipartiteMatching {
 
       matching = new Integer[vertices.size() + 1];
       dist = new Integer[partition1.size() + 1];
-      queue = new FixedSizeIntegerQueue(vertices.size());
+      queue = new Queue(vertices.size());
   }
 
   /**
@@ -219,15 +219,5 @@ public class HopcroftKarpBipartiteMatching {
     public Matching(Graph graph, Set<Edge> edges, Integer weight){}
   }
 
-  private class FixedSizeIntegerQueue{
-    public FixedSizeIntegerQueue(Integer i){}
-    public void clear(){}
-    public Boolean isEmpty(){
-      return true;
-    }
-    public void enqueue(Integer v){}
-    public Integer poll(){
-      return 0;
-    }
-  }
+  
 }
