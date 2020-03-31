@@ -482,5 +482,7 @@ public abstract class Graphs
     {
         return new VertexToIntegerMapping<String>(Objects.requireNonNull(graph).vertexSet());
     }
+    */
+
 }
-*/
+
