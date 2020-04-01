@@ -59,8 +59,13 @@ public virtual class Multigraph implements Graph
     // private Supplier<Edge> edgeSupplier;
     // private GraphType type;
 
-    private UndirectedSpecifics specifics;
-    private IntrusiveEdgesSpecifics intrusiveEdgesSpecifics;
+    //COMMENTED OUT FOR REFACTORING **** DUSTIN 4/1
+    private Set<Edge> edgeSet;
+    private Map<String,Set<Edge>> vertexMap;
+
+    //private UndirectedSpecifics specifics;
+    //private IntrusiveEdgesSpecifics intrusiveEdgesSpecifics;
+    //****** */
     // private GraphSpecificsStrategy<V, E> graphSpecificsStrategy;
 
     // /**
@@ -90,8 +95,13 @@ public virtual class Multigraph implements Graph
     //  */
     public Multigraph()
     {
-        this.specifics = new UndirectedSpecifics(this, new Map<String, UndirectedEdgeContainer>());
-        this.intrusiveEdgesSpecifics = new IntrusiveEdgesSpecifics(new Map<Edge, Edge>());
+        this.edgeSet = new Set<Edge>();
+        this.vertexMap = new Map<String,Set<Edge>>();
+
+        //this.specifics = new UndirectedSpecifics(this, new Map<String, UndirectedEdgeContainer>());
+
+
+        //this.intrusiveEdgesSpecifics = new IntrusiveEdgesSpecifics(new Map<Edge, Edge>());
     }
 
     // /**
@@ -169,7 +179,15 @@ public virtual class Multigraph implements Graph
      */
     public Edge getEdge(String sourceVertex, String targetVertex)
     {
-        return specifics.getEdge(sourceVertex, targetVertex);
+        if (this.containsVertex(sourceVertex) && this.containsVertex(targetVertex)) {
+            for (Edge e : vertexMap.get(sourceVertex)) {
+                if (sourceVertex.equals(e.source) && targetVertex.equals(e.target) 
+                    || sourceVertex.equals(e.target) && targetVertex.equals(e.source)) 
+                return e;
+            }
+        }
+        return null;
+        
     }
 
     /**
@@ -185,8 +203,12 @@ public virtual class Multigraph implements Graph
         }
 
         Edge e = new Edge(sourceVertex, targetVertex);
-        if (intrusiveEdgesSpecifics.add(e, sourceVertex, targetVertex)) {
-            specifics.addEdgeToTouchingVertices(sourceVertex, targetVertex, e);
+        if (!edgeSet.contains(e)) {
+            edgeSet.add(e);
+            vertexMap.get(sourceVertex).add(e);
+            if (!sourceVertex.equals(targetVertex)) {
+                vertexMap.get(targetVertex).add(e);
+            }          
             return e;
         }
         return null;
@@ -253,8 +275,12 @@ public virtual class Multigraph implements Graph
         } else if (containsVertex(v)) {
             return false;
         } else {
-            specifics.addVertex(v);
+            Set<Edge> ec = vertexMap.get(v);
+            if (ec == null) {
+                vertexMap.put(v, new Set<Edge>());        
+            }
             return true;
+            
         }
     }
 
@@ -325,7 +351,7 @@ public virtual class Multigraph implements Graph
      */
     public boolean containsVertex(String v)
     {
-        return specifics.getVertexSet().contains(v);
+        return vertexMap.keySet().contains(v);
     }
 
     // /**
@@ -351,7 +377,8 @@ public virtual class Multigraph implements Graph
     public Set<Edge> edgesOf(String vertex)
     {
         assertVertexExist(vertex);
-        return specifics.edgesOf(vertex);
+        return vertexMap.get(vertex);
+        
     }
 
     // /**
@@ -446,7 +473,7 @@ public virtual class Multigraph implements Graph
      */
     public Set<String> vertexSet()
     {
-        return specifics.getVertexSet();
+        return vertexMap.keySet();
     }
 
     // /**
