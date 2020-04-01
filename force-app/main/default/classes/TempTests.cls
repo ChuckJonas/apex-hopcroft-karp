@@ -107,8 +107,8 @@ public with sharing class TempTests {
         stopTime = Limits.getCpuTime();
         System.debug('Finished! ' + (stopTime - startTime) + 'ms');
         for(Edge edge : matches.getEdges()){
-          subscriptionSet.remove(graph.getEdgeSource(edge));
-          inventorySet.remove(graph.getEdgeTarget(edge));
+          subscriptionSet.remove(edge.source);
+          inventorySet.remove(edge.target);
         }
         System.debug('=== Unmatched Subscriptions ===');
         System.assertEquals(4 * scaler, subscriptionSet.size());

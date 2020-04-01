@@ -117,12 +117,6 @@ public interface Graph
     //NEEDED
     Set<String> vertexSet();
 
-    //NEEDED
-    String getEdgeSource(Edge e);
-
-    //NEEDED
-    String getEdgeTarget(Edge e);
-
     //GraphType getType();
 
     //Double DEFAULT_EDGE_WEIGHT = 1.0;

@@ -1,39 +1,16 @@
-public with sharing class Edge {
+public class Edge {
 
-    private final String V1;
-    private final String V2;
-    private final double weight;
+    public final String source;
+    public final String target;
 
-    public Edge(String V1, String V2, double weight) {
-        this.V1 = V1;
-        this.V2 = V2;
-        this.weight = weight;
-    }
-
-    public Edge(String V1, String V2) {
-        this.V1 = V1;
-        this.V2 = V2;
-        this.weight = 1.0;
-    }
-
-    public double weight() {
-        return weight;
-    }
-
-    public String getV1() {
-        return V1;
-    }
-
-    public String getV2() {
-        return V2;
+    public Edge(String source, String target) {
+        this.source = source;
+        this.target = target;
     }
 
     public String getOppositeVertex(String vertex) {
-        if (vertex == V1) return V2;
-        else if (vertex == V2) return V1;
+        if (vertex == source) return target;
+        else if (vertex == target) return source;
         else throw new IllegalArgumentException('Illegal Endpoint');
     }
-
-
-
 }

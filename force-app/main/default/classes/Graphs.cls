@@ -196,7 +196,7 @@ public abstract class Graphs
         List<String> neighbors = new List<String>();
 
         for (Edge e : g.edgesOf(vertex)) {
-            neighbors.add(getOppositeVertex(g, e, vertex));
+            neighbors.add(e.getOppositeVertex(vertex));
         }
 
         return neighbors;
@@ -210,7 +210,7 @@ public abstract class Graphs
         Set<String> neighbors = new Set<String>();
 
         for (Edge e : g.edgesOf(vertex)) {
-            neighbors.add(Graphs.getOppositeVertex(g, e, vertex));
+            neighbors.add(e.getOppositeVertex(vertex));
         }
 
         return neighbors;
@@ -291,18 +291,10 @@ public abstract class Graphs
     //  * @return vertex opposite to v across e
     //  */
 
-    public static String getOppositeVertex(Graph g, Edge e, String v)
-    {
-        String source = g.getEdgeSource(e);
-        String target = g.getEdgeTarget(e);
-        if (v.equals(source)) {
-            return target;
-        } else if (v.equals(target)) {
-            return source;
-        } else {
-            throw new IllegalArgumentException('no such vertex: ' + v);
-        }
-    }
+    // public static String getOppositeVertex(Edge e, String v)
+    // {
+    //   return e.getOppositeVertex(v);
+    // }
 
     // /**
     //  * Removes the given vertex from the given graph. If the vertex to be removed has one or more

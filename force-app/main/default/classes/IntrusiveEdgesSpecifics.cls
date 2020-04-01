@@ -56,7 +56,7 @@ public virtual class IntrusiveEdgesSpecifics {
       if (ie == null) {
           throw new IllegalArgumentException('no such edge in graph: ' + e.toString());
       }
-      return e.getV1();
+      return e.source;
   }
 
   /**
@@ -71,30 +71,9 @@ public virtual class IntrusiveEdgesSpecifics {
       if (ie == null) {
           throw new IllegalArgumentException('no such edge in graph: ' + e.toString());
       }
-      return ie.getV2();
+      return ie.target;
   }
 
-  /**
-   * Get the weight of an edge.
-   *
-   * @param e the edge
-   * @return the weight of an edge
-   */
-  public double getEdgeWeight(Edge e)
-  {
-      return e.weight();
-  }
-
-  /**
-   * Set the weight of an edge
-   *
-   * @param e the edge
-   * @param weight the new weight
-   */
-  // public void setEdgeWeight(Edge e, double weight)
-  // {
-  //     throw e.;
-  // }
 
   public boolean add(Edge e, String sourceVertex, String targetVertex)
     {
@@ -102,7 +81,7 @@ public virtual class IntrusiveEdgesSpecifics {
             return false;
         }
 
-        Edge intrusiveEdge  = new Edge(sourceVertex, targetVertex, 0);
+        Edge intrusiveEdge  = new Edge(sourceVertex, targetVertex);
 
 
         edgeMap.put(e, intrusiveEdge);

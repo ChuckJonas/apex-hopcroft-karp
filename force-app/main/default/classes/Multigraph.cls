@@ -184,7 +184,7 @@ public virtual class Multigraph implements Graph
             throw new IllegalArgumentException(LOOPS_NOT_ALLOWED);
         }
 
-        Edge e = new Edge(sourceVertex, targetVertex, 0);
+        Edge e = new Edge(sourceVertex, targetVertex);
         if (intrusiveEdgesSpecifics.add(e, sourceVertex, targetVertex)) {
             specifics.addEdgeToTouchingVertices(sourceVertex, targetVertex, e);
             return e;
@@ -263,7 +263,7 @@ public virtual class Multigraph implements Graph
      */
     public String getEdgeSource(Edge e)
     {
-        return e.getV1();
+        return e.source;
     }
 
     /**
@@ -271,7 +271,7 @@ public virtual class Multigraph implements Graph
      */
     public String getEdgeTarget(Edge e)
     {
-        return e.getV2();
+        return e.target;
     }
 
     // // /**

@@ -41,32 +41,32 @@ public class Matching {
         this.weight = weight;
     }
 
-        
+
     public Graph getGraph()
     {
         return graph;
     }
 
-        
+
     public double getWeight()
     {
         return weight;
     }
 
-        
+
     public Set<Edge> getEdges()
     {
         return edges;
     }
 
-        
+
     public boolean isMatched(String v)
     {
         if (matchedVertices == null) { // lazily index the vertices that have been matched
             matchedVertices = new Set<String>();
             for (Edge e : edges) {
-                matchedVertices.add(graph.getEdgeSource(e));
-                matchedVertices.add(graph.getEdgeTarget(e));
+                matchedVertices.add(e.source);
+                matchedVertices.add(e.target);
             }
         }
         return matchedVertices.contains(v);
@@ -75,12 +75,12 @@ public class Matching {
     /**
     * {@inheritDoc}
     */
-    
+
     public override String toString()
     {
         return 'Matching [edges=' + edges + ', weight=' + weight + ']';
     }
 
-    
+
 
 }

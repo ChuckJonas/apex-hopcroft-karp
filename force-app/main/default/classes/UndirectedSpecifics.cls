@@ -84,11 +84,11 @@ public virtual class UndirectedSpecifics {
 
   private boolean isEqualsStraightOrInverted(String sourceVertex, String targetVertex, Edge e)
   {
-      boolean equalStraight = sourceVertex.equals(graph.getEdgeSource(e))
-          && targetVertex.equals(graph.getEdgeTarget(e));
+      boolean equalStraight = sourceVertex.equals(e.source)
+          && targetVertex.equals(e.target);
 
-      boolean equalInverted = sourceVertex.equals(graph.getEdgeTarget(e))
-          && targetVertex.equals(graph.getEdgeSource(e));
+      boolean equalInverted = sourceVertex.equals(e.target)
+          && targetVertex.equals(e.source);
       return equalStraight || equalInverted;
   }
 
@@ -130,7 +130,7 @@ public virtual class UndirectedSpecifics {
       }
 
       // create and add
-      Edge e = new Edge(sourceVertex, targetVertex, 0);
+      Edge e = new Edge(sourceVertex, targetVertex);
       ec.addEdge(e);
       getEdgeContainer(targetVertex).addEdge(e);
 
