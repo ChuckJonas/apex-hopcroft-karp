@@ -181,13 +181,13 @@ public virtual class Multigraph implements Graph
     {
         if (this.containsVertex(sourceVertex) && this.containsVertex(targetVertex)) {
             for (Edge e : vertexMap.get(sourceVertex)) {
-                if (sourceVertex.equals(e.source) && targetVertex.equals(e.target) 
-                    || sourceVertex.equals(e.target) && targetVertex.equals(e.source)) 
+                if (sourceVertex.equals(e.source) && targetVertex.equals(e.target)
+                    || sourceVertex.equals(e.target) && targetVertex.equals(e.source))
                 return e;
             }
         }
         return null;
-        
+
     }
 
     /**
@@ -208,7 +208,7 @@ public virtual class Multigraph implements Graph
             vertexMap.get(sourceVertex).add(e);
             if (!sourceVertex.equals(targetVertex)) {
                 vertexMap.get(targetVertex).add(e);
-            }          
+            }
             return e;
         }
         return null;
@@ -277,10 +277,10 @@ public virtual class Multigraph implements Graph
         } else {
             Set<Edge> ec = vertexMap.get(v);
             if (ec == null) {
-                vertexMap.put(v, new Set<Edge>());        
+                vertexMap.put(v, new Set<Edge>());
             }
             return true;
-            
+
         }
     }
 
@@ -351,7 +351,7 @@ public virtual class Multigraph implements Graph
      */
     public boolean containsVertex(String v)
     {
-        return vertexMap.keySet().contains(v);
+        return vertexMap.containsKey(v);
     }
 
     // /**
@@ -378,7 +378,7 @@ public virtual class Multigraph implements Graph
     {
         assertVertexExist(vertex);
         return vertexMap.get(vertex);
-        
+
     }
 
     // /**
