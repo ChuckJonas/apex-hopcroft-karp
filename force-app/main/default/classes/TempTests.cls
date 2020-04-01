@@ -3,7 +3,7 @@ public with sharing class TempTests {
   @isTest
   private static void test(){
 
-      Integer scaler = 12;
+      Integer scaler = 1;
 
       Graph graph = new Multigraph();
       Map<String, Integer> inventory = new Map<String, Integer> ();
@@ -92,11 +92,11 @@ public with sharing class TempTests {
         System.assert(graph.containsVertex('javascript-0'));
         System.assert(graph.containsVertex('typescript-0'));
 
-        System.assertNotEquals(graph.getEdge('acme-0', 'javascript-0'), null);
-        System.assertNotEquals(graph.getEdge('acme-1', 'javascript-0'), null);
+        System.assertNotEquals(null, graph.getEdge('acme-0', 'javascript-0'));
+        System.assertNotEquals(null, graph.getEdge('acme-1', 'javascript-0'));
 
-        System.assertNotEquals(graph.getEdge('acme-0', 'typescript-0'), null);
-        System.assertNotEquals(graph.getEdge('acme-1', 'typescript-0'), null);
+        System.assertNotEquals(null, graph.getEdge('acme-0', 'typescript-0'));
+        System.assertNotEquals(null, graph.getEdge('acme-1', 'typescript-0'));
 
         // System.assertEquals(2, Graphs.neighborListOf(graph, 'acme-0').size());
 
@@ -111,11 +111,11 @@ public with sharing class TempTests {
           inventorySet.remove(graph.getEdgeTarget(edge));
         }
         System.debug('=== Unmatched Subscriptions ===');
-        System.debug('Count: ' + subscriptionSet.size());
+        System.assertEquals(4 * scaler, subscriptionSet.size());
         System.debug(subscriptionSet);
 
         System.debug('=== Unmatched Inventory ===');
-        System.debug('Count: ' + inventorySet.size());
+        System.assertEquals(18 * scaler, inventorySet.size());
         System.debug(inventorySet);
   }
 }
