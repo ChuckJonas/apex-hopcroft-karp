@@ -51,12 +51,13 @@ public class HopcroftKarpBipartiteMatching {
   private Map<String, Integer> vertexIndexMap;
 
   /* Number of matched vertices i partition 1. */
-  private Integer matchedVertices;
+  private Integer matchedVertices = 0;
 
   /* Dummy vertex. All vertices are initially matched against this dummy vertex */
   private final Integer DUMMY = 0;
+
   /* Infinity */
-  private final Integer INF = 2147483647;
+  private final Integer INF = 999999999;
 
   /* Array keeping track of the matching. */
   private Integer[] matching;
@@ -79,7 +80,7 @@ public class HopcroftKarpBipartiteMatching {
   public HopcroftKarpBipartiteMatching(
       Graph graph, Set<String> partition1, Set<String> partition2)
   {
-      // this.graph = GraphTests.requireUndirected(graph);
+      this.graph = graph;
 
       // Ensure that partition1 is smaller or equal in size compared to partition 2
       if (partition1.size() <= partition2.size()) {
@@ -104,8 +105,8 @@ public class HopcroftKarpBipartiteMatching {
       for (Integer i = 0; i < vertices.size(); i++)
           vertexIndexMap.put(vertices.get(i), i);
 
-      matching = new Integer[vertices.size() + 1];
-      dist = new Integer[partition1.size() + 1];
+      matching = ArrayUtil.initializeFixedIntArray(vertices.size() + 1);
+      dist = ArrayUtil.initializeFixedIntArray(partition1.size() + 1);
       queue = new Queue(vertices.size());
   }
 
@@ -116,7 +117,6 @@ public class HopcroftKarpBipartiteMatching {
   {
       for (String uOrig : partition1) {
           Integer u = vertexIndexMap.get(uOrig);
-
           for (String vOrig : Graphs.neighborListOf(graph, uOrig)) {
               Integer v = vertexIndexMap.get(vOrig);
               if (matching[v] == DUMMY) {
@@ -213,11 +213,4 @@ public class HopcroftKarpBipartiteMatching {
       return new Matching(graph, edges, edges.size());
   }
 
-// PLACEHOLDERS
-
-  private class Matching{
-    public Matching(Graph graph, Set<Edge> edges, Integer weight){}
-  }
-
-  
 }

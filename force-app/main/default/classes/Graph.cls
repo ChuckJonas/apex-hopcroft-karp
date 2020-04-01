@@ -57,78 +57,80 @@
  */
 public interface Graph
 {
-    Set<Edge> getAllEdges(String sourceVertex, String targetVertex);
+    // Set<Edge> getAllEdges(String sourceVertex, String targetVertex);
 
     Edge getEdge(String sourceVertex, String targetVertex);
 
-    
+
     //Supplier<String> getVertexSupplier();
 
-    
+
     //Supplier<Edge> getEdgeSupplier();
 
-    
+
     Edge addEdge(String sourceVertex, String targetVertex);
 
-    
-    boolean addEdge(String sourceVertex, String targetVertex, Edge e);
 
-    
-    String addVertex();
+    // boolean addEdge(String sourceVertex, String targetVertex, Edge e);
 
-    
+
+    // String addVertex();
+
+
     boolean addVertex(String v);
 
-    boolean containsEdge(String sourceVertex, String targetVertex);
+    // boolean containsEdge(String sourceVertex, String targetVertex);
 
-    boolean containsEdge(Edge e);
+    // boolean containsEdge(Edge e);
 
     boolean containsVertex(String v);
 
-    Set<Edge> edgeSet();
+    // Set<Edge> edgeSet();
 
-    Integer degreeOf(String vertex);
+    // Integer degreeOf(String vertex);
 
     Set<Edge> edgesOf(String vertex);
 
-    Integer inDegreeOf(String vertex);
+    // Integer inDegreeOf(String vertex);
 
-    Set<Edge> incomingEdgesOf(String vertex);
+    // Set<Edge> incomingEdgesOf(String vertex);
 
-    Integer outDegreeOf(String vertex);
+    // Integer outDegreeOf(String vertex);
 
-    Set<Edge> outgoingEdgesOf(String vertex);
+    // Set<Edge> outgoingEdgesOf(String vertex);
 
-    boolean removeAllEdges(Set<Edge> edges);
+    // boolean removeAllEdges(Set<Edge> edges);
 
-    Set<Edge> removeAllEdges(String sourceVertex, String targetVertex);
+    // Set<Edge> removeAllEdges(String sourceVertex, String targetVertex);
 
-    boolean removeAllVertices(Set<String> vertices);
+    // boolean removeAllVertices(Set<String> vertices);
 
-    
-    Edge removeEdge(String sourceVertex, String targetVertex);
 
-    
-    boolean removeEdge(Edge e);
+    // Edge removeEdge(String sourceVertex, String targetVertex);
 
-    
-    boolean removeVertex(String v);
 
-    
+    // boolean removeEdge(Edge e);
+
+
+    // boolean removeVertex(String v);
+
+    //NEEDED
     Set<String> vertexSet();
 
+    //NEEDED
     String getEdgeSource(Edge e);
 
+    //NEEDED
     String getEdgeTarget(Edge e);
 
     //GraphType getType();
 
     //Double DEFAULT_EDGE_WEIGHT = 1.0;
 
-    double getEdgeWeight(Edge e);
+    // double getEdgeWeight(Edge e);
 
-    void setEdgeWeight(Edge e, double weight);
+    // void setEdgeWeight(Edge e, double weight);
 
-    
+
 
 }
