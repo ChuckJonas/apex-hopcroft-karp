@@ -37,30 +37,25 @@ public virtual class Multigraph implements Graph {
   private static final String LOOPS_NOT_ALLOWED = 'loops not allowed';
 
   private Set<String> edgeSet;
-  private Map<String, Set<Edge>> vertexMap;
+  private Map<String, Set<String>> vertexMap;
 
   public Multigraph() {
     this.edgeSet = new Set<String>();
-    this.vertexMap = new Map<String, Set<Edge>>();
+    this.vertexMap = new Map<String, Set<String>>();
   }
 
   public Edge getEdge(String sourceVertex, String targetVertex) {
     if (
       this.containsVertex(sourceVertex) && this.containsVertex(targetVertex)
     ) {
-      for (Edge e : vertexMap.get(sourceVertex)) {
-        if (
-          sourceVertex.equals(e.source) && targetVertex.equals(e.target) ||
-          sourceVertex.equals(e.target) && targetVertex.equals(e.source)
-        ) {
-          return e;
-        }
+      if(vertexMap.get(sourceVertex).contains(targetVertex)){
+        return new Edge(sourceVertex, targetVertex);
       }
     }
     return null;
   }
 
-  public Edge addEdge(String sourceVertex, String targetVertex) {
+  public void addEdge(String sourceVertex, String targetVertex) {
     assertVertexExist(sourceVertex);
     assertVertexExist(targetVertex);
 
@@ -71,13 +66,10 @@ public virtual class Multigraph implements Graph {
     String edgeKey = sourceVertex + ':' + targetVertex;
 
     if (!edgeSet.contains(edgeKey)) {
-      Edge e = new Edge(sourceVertex, targetVertex);
       edgeSet.add(edgeKey);
-      vertexMap.get(sourceVertex).add(e);
-      vertexMap.get(targetVertex).add(e);
-      return e;
+      vertexMap.get(sourceVertex).add(targetVertex);
+      vertexMap.get(targetVertex).add(sourceVertex);
     }
-    return null;
   }
 
   public boolean addVertex(String v) {
@@ -86,9 +78,9 @@ public virtual class Multigraph implements Graph {
     } else if (containsVertex(v)) {
       return false;
     } else {
-      Set<Edge> ec = vertexMap.get(v);
+      Set<String> ec = vertexMap.get(v);
       if (ec == null) {
-        vertexMap.put(v, new Set<Edge>());
+        vertexMap.put(v, new Set<String>());
       }
       return true;
     }
@@ -118,10 +110,15 @@ public virtual class Multigraph implements Graph {
   //     return intrusiveEdgesSpecifics.getEdgeSet();
   // }
 
-  public Set<Edge> edgesOf(String vertex) {
+  public Set<String> getOppositeVertices(String vertex) {
     assertVertexExist(vertex);
     return vertexMap.get(vertex);
   }
+
+  // public Set<String> edgesOf(String vertex) {
+  //   assertVertexExist(vertex);
+  //   return vertexMap.get(vertex);
+  // }
 
   // /**
   //  * {@inheritDoc}

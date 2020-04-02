@@ -68,7 +68,7 @@ public interface Graph
     //Supplier<Edge> getEdgeSupplier();
 
 
-    Edge addEdge(String sourceVertex, String targetVertex);
+    void addEdge(String sourceVertex, String targetVertex);
 
 
     // boolean addEdge(String sourceVertex, String targetVertex, Edge e);
@@ -89,7 +89,8 @@ public interface Graph
 
     // Integer degreeOf(String vertex);
 
-    Set<Edge> edgesOf(String vertex);
+    Set<String> getOppositeVertices(String vertex);
+    // Set<Edge> edgesOf(String vertex);
 
     // Integer inDegreeOf(String vertex);
 

@@ -195,25 +195,20 @@ public abstract class Graphs
     {
         List<String> neighbors = new List<String>();
 
-        for (Edge e : g.edgesOf(vertex)) {
-            neighbors.add(e.getOppositeVertex(vertex));
+        for (String oppV : g.getOppositeVertices(vertex)) {
+            neighbors.add(oppV);
         }
 
         return neighbors;
     }
+
 
     /**
      * Returns a set of vertices that are neighbors of a specified vertex.
      */
     public static Set<String> neighborSetOf(Graph g, String vertex)
     {
-        Set<String> neighbors = new Set<String>();
-
-        for (Edge e : g.edgesOf(vertex)) {
-            neighbors.add(e.getOppositeVertex(vertex));
-        }
-
-        return neighbors;
+        return g.getOppositeVertices(vertex);
     }
 
     // /**

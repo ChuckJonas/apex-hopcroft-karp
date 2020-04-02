@@ -18,8 +18,9 @@ public with sharing class TempTests {
 
   @isTest
   private static void testOptimized(){
+      Integer startingHeap = Limits.getHeapSize();
 
-      Integer scaler = 5;
+      Integer scaler = 40;
 
       System.debug('Optimized Test with scaler of ' + scaler);
       Graph graph = new Multigraph();
@@ -61,6 +62,7 @@ public with sharing class TempTests {
 
         System.debug('Setting Up Graph...');
         Integer startTime = Limits.getCpuTime();
+
 
         //create a vertex to represent each 'bundle' of inventory.  EG javascript-1, javascript-2
 
@@ -104,12 +106,17 @@ public with sharing class TempTests {
             }
         }
 
+        Integer graphHeap = Limits.getHeapSize() - startingHeap;
+
         Integer stopTime = Limits.getCpuTime();
         System.debug('Finished! ' + (stopTime - startTime) + 'ms');
         System.debug('Inventory Vertex Count: ' + inventorySet.size());
         System.debug('Subscription Vertex Count: ' + subscriptionSet.size());
 
         System.debug('Edge Count: ' + edgeCount);
+        // add data to heap
+
+        System.debug('Graph Heap: ' + (graphHeap - startingHeap));
 
         // System.debug(JSON.serialize(graph));
         System.assert(graph.containsVertex('acme-0'));
@@ -131,6 +138,7 @@ public with sharing class TempTests {
         Matching matches = alg.getMatching();
         stopTime = Limits.getCpuTime();
         System.debug('Finished! ' + (stopTime - startTime) + 'ms');
+        System.debug('Remaining Heap: ' + (Limits.getLimitHeapSize() - Limits.getHeapSize()));
         for(Edge edge : matches.getEdges()){
           subscriptionSet.remove(edge.source);
           inventorySet.remove(edge.target);
@@ -142,6 +150,7 @@ public with sharing class TempTests {
         System.debug('=== Unmatched Inventory ===');
         System.assertEquals(18 * scaler, inventorySet.size());
         System.debug(inventorySet);
+
   }
 
   @isTest
@@ -217,7 +226,7 @@ public with sharing class TempTests {
                     for(Integer j = 0; j < invBundles * scaler; j++){
                         edgeCount++;
                         String invId = invKey + '-' + j;
-                        Edge edge = graph.addEdge(subId, invId);
+                        graph.addEdge(subId, invId);
                     }
                 }
             }
