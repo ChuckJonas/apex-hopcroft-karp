@@ -1,4 +1,4 @@
-// could make into interface 
+// could make into interface
 //fixed size OR dynamic
 
 public class Queue {
@@ -8,11 +8,11 @@ public class Queue {
     }
 
     public Queue(Integer size) {
-        ls = new List<Integer>(size);
+        ls = ArrayUtil.initializeFixedIntArray(size);
     }
 
     public Integer size() {return ls.size();}
-    
+
     public Boolean isEmpty() {
         return ls.isEmpty();
     }
@@ -27,7 +27,7 @@ public class Queue {
 
     public Integer first() {
         if (isEmpty()) {return null;}
-        return ls.get(0);      
+        return ls.get(0);
     }
 
     public Integer poll() {
