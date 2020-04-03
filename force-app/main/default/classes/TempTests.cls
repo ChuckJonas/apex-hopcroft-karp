@@ -23,7 +23,7 @@ public with sharing class TempTests {
       Integer scaler = 40;
 
       System.debug('Optimized Test with scaler of ' + scaler);
-      Graph graph = new Multigraph();
+      Multigraph graph = new Multigraph();
       Map<String, Integer> inventory = new Map<String, Integer> ();
         inventory.put('javascript', 2);
         inventory.put('typescript', 3);
@@ -158,7 +158,7 @@ public with sharing class TempTests {
       Integer scaler = 29;
       System.debug('OG Test with scaler of ' + scaler);
 
-      Graph graph = new Multigraph();
+      Multigraph graph = new Multigraph();
       Map<String, Integer> inventory = new Map<String, Integer> ();
         inventory.put('javascript', 2);
         inventory.put('typescript', 3);

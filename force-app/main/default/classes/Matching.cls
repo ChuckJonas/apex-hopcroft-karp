@@ -20,9 +20,8 @@
 
 
 public class Matching {
-    private static final long serialVersionUID = 4767675421846527768L;
-
-    private Graph graph;
+    
+    private Multigraph graph;
     private Set<Edge> edges;
     private double weight;
     private Set<String> matchedVertices = null;
@@ -34,7 +33,7 @@ public class Matching {
     * @param edges the edges of the matching
     * @param weight the weight of the matching
     */
-    public Matching(Graph graph, Set<Edge> edges, double weight)
+    public Matching(Multigraph graph, Set<Edge> edges, double weight)
     {
         this.graph = graph;
         this.edges = edges;
@@ -42,7 +41,7 @@ public class Matching {
     }
 
 
-    public Graph getGraph()
+    public Multigraph getGraph()
     {
         return graph;
     }

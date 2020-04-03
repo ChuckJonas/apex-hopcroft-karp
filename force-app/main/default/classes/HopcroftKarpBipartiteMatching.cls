@@ -1,21 +1,3 @@
-/*
- * (C) Copyright 2017-2020, by Joris Kinable and Contributors.
- *
- * JGraphT : a free Java graph-theory library
- *
- * See the CONTRIBUTORS.md file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0, or the
- * GNU Lesser General Public License v2.1 or later
- * which is available at
- * http://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html.
- *
- * SPDX-License-Identifier: EPL-2.0 OR LGPL-2.1-or-later
- */
-
  /**
  * Implementation of the well-known Hopcroft Karp algorithm to compute a matching of maximum
  * cardinality in a bipartite graph. The algorithm runs in $O(|E| \cdot \sqrt{|V|})$ time. This
@@ -37,11 +19,12 @@
  * "http://en.wikipedia.org/wiki/Hopcroft-Karp_algorithm">http://en.wikipedia.org/wiki/Hopcroft-Karp_algorithm</a>
  *
  *
- * @author Joris Kinable
+ * @author Chuck Jonas and Dustin Kovac
+ * Derived from Joris Kinable
  */
 public class HopcroftKarpBipartiteMatching {
 
-  private final Graph graph;
+  private final Multigraph graph;
   private final Set<String> partition1;
   private final Set<String> partition2;
 
@@ -78,7 +61,7 @@ public class HopcroftKarpBipartiteMatching {
    * @param partition2 the second partition of vertices in the bipartite graph
    */
   public HopcroftKarpBipartiteMatching(
-      Graph graph, Set<String> partition1, Set<String> partition2)
+      Multigraph graph, Set<String> partition1, Set<String> partition2)
   {
       this.graph = graph;
 
@@ -105,8 +88,8 @@ public class HopcroftKarpBipartiteMatching {
       for (Integer i = 0; i < vertices.size(); i++)
           vertexIndexMap.put(vertices.get(i), i);
 
-      matching = ArrayUtil.initializeFixedIntArray(vertices.size() + 1);
-      dist = ArrayUtil.initializeFixedIntArray(partition1.size() + 1);
+      matching = initializeFixedIntArray(vertices.size() + 1);
+      dist = initializeFixedIntArray(partition1.size() + 1);
       queue = new Queue(vertices.size());
   }
 
@@ -117,7 +100,7 @@ public class HopcroftKarpBipartiteMatching {
   {
       for (String uOrig : partition1) {
           Integer u = vertexIndexMap.get(uOrig);
-          for (String vOrig : Graphs.neighborListOf(graph, uOrig)) {
+          for (String vOrig : graph.neighborListOf(uOrig)) {
               Integer v = vertexIndexMap.get(vOrig);
               if (matching[v] == DUMMY) {
                   matching[v] = u;
@@ -151,7 +134,7 @@ public class HopcroftKarpBipartiteMatching {
       while (!queue.isEmpty()) {
           Integer u = queue.poll();
           if (dist[u] < dist[DUMMY])
-              for (String vOrig : Graphs.neighborListOf(graph, vertices.get(u))) {
+              for (String vOrig : graph.neighborListOf(vertices.get(u))) {
                   Integer v = vertexIndexMap.get(vOrig);
                   if (dist[matching[v]] == INF) {
                       dist[matching[v]] = dist[u] + 1;
@@ -172,7 +155,7 @@ public class HopcroftKarpBipartiteMatching {
   private boolean dfs(Integer u)
   {
       if (u != DUMMY) {
-          for (String vOrig : Graphs.neighborListOf(graph, vertices.get(u))) {
+          for (String vOrig : graph.neighborListOf(vertices.get(u))) {
               Integer v = vertexIndexMap.get(vOrig);
               if (dist[matching[v]] == dist[u] + 1)
                   if (dfs(matching[v])) {
@@ -211,6 +194,65 @@ public class HopcroftKarpBipartiteMatching {
           }
       }
       return new Matching(graph, edges, edges.size());
+  }
+  private class Queue {
+    private List<Integer> ls;
+    public Queue() {
+        ls = new List<Integer>();
+    }
+
+    public Queue(Integer size) {
+        ls = initializeFixedIntArray(size);
+    }
+
+    public Integer size() {return ls.size();}
+
+    public Boolean isEmpty() {
+        return ls.isEmpty();
+    }
+
+    public void clear() {
+        ls.clear();
+    }
+
+    public void enqueue(Integer o) {
+        ls.add(o);
+    }
+
+    public Integer first() {
+        if (isEmpty()) {return null;}
+        return ls.get(0);
+    }
+
+    public Integer poll() {
+        if(isEmpty()){return null;}
+        Integer firstEntry = ls.get(0);
+        ls.remove(0);
+        return firstEntry;
+    }
+
+    public void addAll(List<Integer> neighbors) {
+        ls.addAll(neighbors);
+    }
+
+    // this presents time complexity issues for large number of nodes
+    public void removeAll(Set<Integer> nodesToRemove) {
+        for (Integer node : nodesToRemove) {
+            if (ls.contains(node)) {
+                Integer index = ls.indexOf(node);
+                ls.remove(index);
+            }
+        }
+    }
+}
+
+//Initializes fixed length list 
+public static Integer[] initializeFixedIntArray(Integer len){
+    Integer[] iArr = new Integer[len];
+    for(Integer i = 0; i < len; i++){
+      iArr[i] = 0;
+    }
+    return iArr;
   }
 
 
