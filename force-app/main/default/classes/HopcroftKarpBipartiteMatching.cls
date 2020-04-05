@@ -1,32 +1,11 @@
- /**
- * Implementation of the well-known Hopcroft Karp algorithm to compute a matching of maximum
- * cardinality in a bipartite graph. The algorithm runs in $O(|E| \cdot \sqrt{|V|})$ time. This
- * implementation accepts undirected graphs which may contain self-loops and multiple edges. To
- * compute a maximum cardinality matching in general (non-bipartite) graphs, use
- * {@link SparseEdmondsMaximumCardinalityMatching} instead.
- *
- * <p>
- * The Hopcroft Karp matching algorithm computes augmenting paths of increasing length, until no
- * augmenting path exists in the graph. At each iteration, the algorithm runs a Breadth First Search
- * from the exposed (free) vertices, until an augmenting path is found. Next, a Depth First Search
- * is performed to find all (vertex disjoint) augmenting paths of the same length. The matching is
- * augmented along all discovered augmenting paths simultaneously.
- *
- * <p>
- * The original algorithm is described in: Hopcroft, John E.; Karp, Richard M. (1973), "An n5/2
- * algorithm for maximum matchings in bipartite graphs", SIAM Journal on Computing 2 (4): 225–231,
- * doi:10.1137/0202019 A coarse overview of the algorithm is given in: <a href=
- * "http://en.wikipedia.org/wiki/Hopcroft-Karp_algorithm">http://en.wikipedia.org/wiki/Hopcroft-Karp_algorithm</a>
- *
- *
+ /*
  * @author Chuck Jonas and Dustin Kovac
- * Derived from Joris Kinable
+ * Derived from Joris Kinable 
  */
 public class HopcroftKarpBipartiteMatching {
 
-  private final Multigraph graph;
-  private final Set<String> partition1;
-  private final Set<String> partition2;
+  private Set<String> partition1;
+  private Set<String> partition2;
 
   /* Ordered list of vertices */
   private List<String> vertices;
@@ -39,6 +18,10 @@ public class HopcroftKarpBipartiteMatching {
   /* Dummy vertex. All vertices are initially matched against this dummy vertex */
   private final Integer DUMMY = 0;
 
+  private static final String LOOPS_NOT_ALLOWED = 'loops not allowed';
+  private static final String INVALID_VERTEX = 'Invalid Vertex';
+
+
   /* Infinity */
   private final Integer INF = 999999999;
 
@@ -50,29 +33,97 @@ public class HopcroftKarpBipartiteMatching {
   /* queue used for breadth first search */
   private Queue queue;
 
-  /**
-   * Constructs a new instance of the Hopcroft Karp bipartite matching algorithm. The input graph
-   * must be bipartite. For efficiency reasons, this class does not check whether the input graph
-   * is bipartite. Invoking this class on a non-bipartite graph results in undefined behavior. To
-   * test whether a graph is bipartite, use {@link GraphTests#isBipartite(Graph)}.
-   *
-   * @param graph bipartite graph
-   * @param partition1 the first partition of vertices in the bipartite graph
-   * @param partition2 the second partition of vertices in the bipartite graph
-   */
-  public HopcroftKarpBipartiteMatching(
-      Multigraph graph, Set<String> partition1, Set<String> partition2)
+  //graph data
+  private Set<String> edgeSet;
+  private Map<String, Set<String>> vertexMap;
+  
+  public HopcroftKarpBipartiteMatching()
   {
-      this.graph = graph;
+      this.vertexMap = new Map<String,Set<String>>();
+      this.edgeSet = new Set<String>();
 
-      // Ensure that partition1 is smaller or equal in size compared to partition 2
-      if (partition1.size() <= partition2.size()) {
-          this.partition1 = partition1;
-          this.partition2 = partition2;
-      } else { // else, swap
-          this.partition1 = partition2;
-          this.partition2 = partition1;
+  }
+
+  // Ensure that partition1 is smaller or equal in size compared to partition 2
+  public void addPartitions(Set<String> partition1, Set<String> partition2) {
+    if (partition1.size() <= partition2.size()) {
+        this.partition1 = partition1;
+        this.partition2 = partition2;
+    } else { // else, swap
+        this.partition1 = partition2;
+        this.partition2 = partition1;
+    }
+  }
+
+  //MultiGraph Methods
+  public String getEdge(String sourceVertex, String targetVertex) {
+    if (
+      vertexMap.containsKey(sourceVertex) && vertexMap.containsKey(targetVertex)
+    ) {
+      if(edgeSet.contains(sourceVertex + ':' + targetVertex)){
+        return sourceVertex + ':' + targetVertex;  
       }
+    }
+    return null;
+  }
+
+  public void addEdge(String sourceVertex, String targetVertex) {
+    assertVertexExist(sourceVertex);
+    assertVertexExist(targetVertex);
+
+    if (sourceVertex == targetVertex) {
+      throw new IllegalArgumentException(LOOPS_NOT_ALLOWED);
+    }
+
+    String edgeKey = sourceVertex + ':' + targetVertex;
+
+    if (!edgeSet.contains(edgeKey)) {
+      edgeSet.add(edgeKey);
+      vertexMap.get(sourceVertex).add(targetVertex);
+      vertexMap.get(targetVertex).add(sourceVertex);
+    }
+  }
+
+  public List<String> neighborListOf(String vertex)
+    {
+    if(!vertexMap.containsKey(vertex)){
+        throw new IllegalArgumentException(INVALID_VERTEX);
+    }
+    List<String> neighbors = new List<String>();
+
+    for (String oppV : vertexMap.get(vertex)) {
+        neighbors.add(oppV);
+    }
+
+    return neighbors;
+    }
+
+  public boolean addVertex(String v) {
+    if (v == null) {
+        throw new NullPointerException();
+    } else if (containsVertex(v)) {
+        return false;
+    } else {
+        Set<String> ec = vertexMap.get(v);
+        if (ec == null) {
+          vertexMap.put(v, new Set<String>());
+        }
+        return true;
+    }
+  }
+
+  private boolean assertVertexExist(String v) {
+    if (containsVertex(v)) {
+        return true;
+    } else if (v == null) {
+        throw new NullPointerException();
+    } else {
+        throw new IllegalArgumentException('no such vertex in graph: ' + v);
+    }
+  }
+
+  public boolean containsVertex(String v) {
+    return vertexMap.containsKey(v);
   }
 
   /**
@@ -100,7 +151,7 @@ public class HopcroftKarpBipartiteMatching {
   {
       for (String uOrig : partition1) {
           Integer u = vertexIndexMap.get(uOrig);
-          for (String vOrig : graph.neighborListOf(uOrig)) {
+          for (String vOrig : neighborListOf(uOrig)) {
               Integer v = vertexIndexMap.get(vOrig);
               if (matching[v] == DUMMY) {
                   matching[v] = u;
@@ -112,12 +163,7 @@ public class HopcroftKarpBipartiteMatching {
       }
   }
 
-  /**
-   * BFS function which finds the shortest augmenting path. The length of the shortest augmenting
-   * path is stored in dist[DUMMY].
-   *
-   * @return true if an augmenting path was found, false otherwise
-   */
+  //Breadth-First Search Algorithm
   private boolean bfs()
   {
       queue.clear();
@@ -134,7 +180,7 @@ public class HopcroftKarpBipartiteMatching {
       while (!queue.isEmpty()) {
           Integer u = queue.poll();
           if (dist[u] < dist[DUMMY])
-              for (String vOrig : graph.neighborListOf(vertices.get(u))) {
+              for (String vOrig : neighborListOf(vertices.get(u))) {
                   Integer v = vertexIndexMap.get(vOrig);
                   if (dist[matching[v]] == INF) {
                       dist[matching[v]] = dist[u] + 1;
@@ -145,17 +191,11 @@ public class HopcroftKarpBipartiteMatching {
       return dist[DUMMY] != INF; // Return true if an augmenting path is found
   }
 
-  /**
-   * Find all vertex disjoint augmenting paths of length dist[DUMMY]. To find paths of dist[DUMMY]
-   * length, we simply follow nodes that are 1 distance increments away from each other.
-   *
-   * @param u vertex from which the DFS is started
-   * @return true if an augmenting path from vertex u was found, false otherwise
-   */
+  //Depth-First Search Algorithm
   private boolean dfs(Integer u)
   {
       if (u != DUMMY) {
-          for (String vOrig : graph.neighborListOf(vertices.get(u))) {
+          for (String vOrig : neighborListOf(vertices.get(u))) {
               Integer v = vertexIndexMap.get(vOrig);
               if (dist[matching[v]] == dist[u] + 1)
                   if (dfs(matching[v])) {
@@ -173,7 +213,7 @@ public class HopcroftKarpBipartiteMatching {
   }
 
 
-  public virtual Matching getMatching()
+  public virtual Set<String> getMatching()
   {
       this.init();
       this.warmStart();
@@ -187,14 +227,15 @@ public class HopcroftKarpBipartiteMatching {
       }
       system.assert(matchedVertices <= partition1.size());
 
-      Set<Edge> edges = new Set<Edge>();
+      Set<String> edges = new  Set<String>();
       for (Integer i = 0; i < vertices.size(); i++) {
           if (matching[i] != DUMMY) {
-              edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
+              edges.add(getEdge(vertices.get(i), vertices.get(matching[i])));
           }
       }
-      return new Matching(graph, edges, edges.size());
+      return edges;
   }
+  //Constructs a fixed sixed queue
   private class Queue {
     private List<Integer> ls;
     public Queue() {
@@ -235,15 +276,6 @@ public class HopcroftKarpBipartiteMatching {
         ls.addAll(neighbors);
     }
 
-    // this presents time complexity issues for large number of nodes
-    public void removeAll(Set<Integer> nodesToRemove) {
-        for (Integer node : nodesToRemove) {
-            if (ls.contains(node)) {
-                Integer index = ls.indexOf(node);
-                ls.remove(index);
-            }
-        }
-    }
 }
 
 //Initializes fixed length list 
@@ -254,6 +286,4 @@ public static Integer[] initializeFixedIntArray(Integer len){
     }
     return iArr;
   }
-
-
 }
