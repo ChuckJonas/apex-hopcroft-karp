@@ -7,7 +7,6 @@ public with sharing class TempTests {
   @isTest
   private static void testSimple() {
 
-    HopcroftKarpBipartiteMatching alg = new HopcroftKarpBipartiteMatching();
 
     Map<String, Integer> inventory = new Map<String, Integer> ();
       inventory.put('one', 1);
@@ -47,34 +46,36 @@ public with sharing class TempTests {
       for(Integer i = 0; i < bundles; i++){
         String id = invKey + '-' + i;
         tmp[i] = id;
-        alg.addVertex(id);
       }
       inventorySet.addAll(tmp);
       inventoryClonedVertex.put(invKey, tmp);
     }
 
     Integer edgeCount = 0;
-    //create a vertex to represent each 'bundle' of inventory purchased.  EG acme-1, acme-2
+    Map<String, Set<String>> edges = new Map<String, Set<String>>();
+    //create a vertex to represent each 'bundle' of inventory purchased. 
     Set<String> subscriptionSet = new Set<String>();
     for(String subKey : subscriptions.keySet()){
       Integer bundles = subscriptions.get(subKey);
       for(Integer i = 0; i < bundles ; i++){
         String subId = subKey + '-' + i;
         subscriptionSet.add(subId);
-        alg.addVertex(subId);
 
         //create edges between each sub bundle and what they can purchase...
         //[optimize by tracking map of all inventory vertex by invKey]
-        for(String invKey : subAllowedInvMap.get(subKey)){
+        Set<String> invVertices = new Set<String>();
+        for(String invKey : subAllowedInvMap.get(subKey)){         
           if(inventoryClonedVertex.containsKey(invKey)){
             String[] inventoryClonedVertexs = inventoryClonedVertex.get(invKey);
             edgeCount += inventoryClonedVertexs.size();
             for(String invVertex : inventoryClonedVertexs){
-              alg.addEdge(subId, invVertex);
+              invVertices.add(invVertex);
             }
           }
         }
+        edges.put(subId, new Set<String>(invVertices));
       }
+
     }
 
     Integer stopTime = Limits.getCpuTime();
@@ -82,24 +83,15 @@ public with sharing class TempTests {
     System.debug('Subscription Vertex Count: ' + subscriptionSet.size());
 
     System.debug('Edge Count: ' + edgeCount);
-    // add data to heap
 
+    System.debug('Running Matching...');
+    HopcroftKarpBipartiteMatching alg = new HopcroftKarpBipartiteMatching(subscriptionSet, inventorySet, edges);
 
-    // System.debug(JSON.serialize(graph));
     System.assert(alg.containsVertex('Billy-0'));
     System.assert(alg.containsVertex('Emily-0'));
     System.assert(alg.containsVertex('John-0'));
     System.assert(alg.containsVertex('Luke-0'));
 
-
-
-    //System.assertNotEquals(null, alg.getEdge('acme-0', 'typescript-0'));
-    //System.assertNotEquals(null, alg.getEdge('acme-1', 'typescript-0'));
-
-    // System.assertEquals(2, Graphs.neighborListOf(graph, 'acme-0').size());
-
-    System.debug('Running Matching...');
-    alg.addPartitions(subscriptionSet, inventorySet);
     Set<String> matches = alg.getMatching();
     for(String edge : matches){
       if (edge != null) {
@@ -108,6 +100,8 @@ public with sharing class TempTests {
         inventorySet.remove(vertexs[1]);
       }  
     }
+
+
     System.assertNotEquals(null, alg.getEdge('Billy-0', 'one-0'));
     System.assertNotEquals(null, alg.getEdge('Emily-0', 'seven-0'));
 
@@ -135,9 +129,6 @@ public with sharing class TempTests {
 
       System.debug('Optimized Test with scaler of ' + scaler);
       
-      
-      HopcroftKarpBipartiteMatching alg = new HopcroftKarpBipartiteMatching();
-
       Map<String, Integer> inventory = new Map<String, Integer> ();
         inventory.put('javascript', 2);
         inventory.put('typescript', 3);
@@ -190,13 +181,13 @@ public with sharing class TempTests {
             for(Integer i = 0; i < bundles; i++){
                 String id = invKey + '-' + i;
                 tmp[i] = id;
-                alg.addVertex(id);
             }
             inventorySet.addAll(tmp);
             inventoryClonedVertex.put(invKey, tmp);
         }
 
         Integer edgeCount = 0;
+        Map<String, Set<String>> edges = new Map<String, Set<String>>();
         //create a vertex to represent each 'bundle' of inventory purchased.  EG acme-1, acme-2
         Set<String> subscriptionSet = new Set<String>();
         for(String subKey : subscriptions.keySet()){
@@ -204,19 +195,20 @@ public with sharing class TempTests {
             for(Integer i = 0; i < bundles ; i++){
                 String subId = subKey + '-' + i;
                 subscriptionSet.add(subId);
-                alg.addVertex(subId);
 
                 //create edges between each sub bundle and what they can purchase...
                 //[optimize by tracking map of all inventory vertex by invKey]
+                Set<String> invVertices = new Set<String>();
                 for(String invKey : subAllowedInvMap.get(subKey)){
                     if(inventoryClonedVertex.containsKey(invKey)){
                       String[] inventoryClonedVertexs = inventoryClonedVertex.get(invKey);
                       edgeCount += inventoryClonedVertexs.size();
                       for(String invVertex : inventoryClonedVertexs){
-                        alg.addEdge(subId, invVertex);
+                        invVertices.add(invVertex);
                       }
                     }
                 }
+                edges.put(subId, new Set<String>(invVertices));
             }
         }
 
@@ -232,7 +224,12 @@ public with sharing class TempTests {
 
         System.debug('Graph Heap: ' + (graphHeap - startingHeap));
 
-        // System.debug(JSON.serialize(graph));
+        
+
+        System.debug('Running Matching...');
+        startTime = Limits.getCpuTime();
+        HopcroftKarpBipartiteMatching alg = new HopcroftKarpBipartiteMatching(subscriptionSet, inventorySet, edges);
+
         System.assert(alg.containsVertex('acme-0'));
         System.assert(alg.containsVertex('acme-1'));
         System.assert(alg.containsVertex('javascript-0'));
@@ -243,12 +240,6 @@ public with sharing class TempTests {
 
         System.assertNotEquals(null, alg.getEdge('acme-0', 'typescript-0'));
         System.assertNotEquals(null, alg.getEdge('acme-1', 'typescript-0'));
-
-        // System.assertEquals(2, Graphs.neighborListOf(graph, 'acme-0').size());
-
-        System.debug('Running Matching...');
-        startTime = Limits.getCpuTime();
-        alg.addPartitions(subscriptionSet, inventorySet);
         Set<String> matches = alg.getMatching();
         stopTime = Limits.getCpuTime();
         System.debug('Finished! ' + (stopTime - startTime) + 'ms');

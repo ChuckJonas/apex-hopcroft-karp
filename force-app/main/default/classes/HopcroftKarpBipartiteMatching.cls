@@ -37,23 +37,33 @@ public class HopcroftKarpBipartiteMatching {
   private Set<String> edgeSet;
   private Map<String, Set<String>> vertexMap;
   
-  public HopcroftKarpBipartiteMatching()
+  public HopcroftKarpBipartiteMatching(Set<String> partition1, Set<String> partition2, Map<String, Set<String>> edgeMap)
   {
       this.vertexMap = new Map<String,Set<String>>();
+      for (String part : partition1) {
+          addVertex(part);
+      }
+      for (String part : partition2) {
+        addVertex(part);
+    }
       this.edgeSet = new Set<String>();
 
-  }
+      for (String vert1 : edgeMap.KeySet()) {
+          for (String vert2 : edgeMap.get(vert1)) {
+            addEdge(vert1, vert2);
+          }
+      }
 
-  // Ensure that partition1 is smaller or equal in size compared to partition 2
-  public void addPartitions(Set<String> partition1, Set<String> partition2) {
-    if (partition1.size() <= partition2.size()) {
+      if (partition1.size() <= partition2.size()) {
         this.partition1 = partition1;
         this.partition2 = partition2;
     } else { // else, swap
         this.partition1 = partition2;
         this.partition2 = partition1;
     }
+
   }
+
 
   //MultiGraph Methods
   public String getEdge(String sourceVertex, String targetVertex) {
@@ -67,7 +77,7 @@ public class HopcroftKarpBipartiteMatching {
     return null;
   }
 
-  public void addEdge(String sourceVertex, String targetVertex) {
+  private void addEdge(String sourceVertex, String targetVertex) {
     assertVertexExist(sourceVertex);
     assertVertexExist(targetVertex);
 
@@ -84,7 +94,7 @@ public class HopcroftKarpBipartiteMatching {
     }
   }
 
-  public List<String> neighborListOf(String vertex)
+  private List<String> neighborListOf(String vertex)
     {
     if(!vertexMap.containsKey(vertex)){
         throw new IllegalArgumentException(INVALID_VERTEX);
@@ -98,7 +108,7 @@ public class HopcroftKarpBipartiteMatching {
     return neighbors;
     }
 
-  public boolean addVertex(String v) {
+  private boolean addVertex(String v) {
     if (v == null) {
         throw new NullPointerException();
     } else if (containsVertex(v)) {
@@ -279,7 +289,7 @@ public class HopcroftKarpBipartiteMatching {
 }
 
 //Initializes fixed length list 
-public static Integer[] initializeFixedIntArray(Integer len){
+private static Integer[] initializeFixedIntArray(Integer len){
     Integer[] iArr = new Integer[len];
     for(Integer i = 0; i < len; i++){
       iArr[i] = 0;
