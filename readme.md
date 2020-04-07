@@ -3,7 +3,7 @@
 ## Overview
 
 This algorithm takes an unweighted bipartite graph and returns the maximal cardinality matching as
-a set of matched values from two partitions.
+a Map of matched values from two partitions.
 
 For example... Say we have a menu of food items and a list of people who have chosen a list of their favorites from the menu. There is enough food to feed everyone but not if everyone chooses the first pick on their list. This algorithm will produce a list matching the people with one of their favorite foods so that the least amount of people are left out. To find who is left out, we simply subtract the people from the matching Set.
 
@@ -59,10 +59,10 @@ For more information:
         possibleEdges
         );
 
-    //Set<String> matches stores each matching made
-    Set<String> matches = matching.getMatching();
-    for (String match : matches) {
-      System.debug('Matched: ' + match);
+    //Map<String,String> matches stores each matching made
+    Map<String,String> matches = matching.getMatching();
+    for (String match : matches.keySet()) {
+      System.debug('Matched: ' + match + ' --> ' + matches.get(match));
     }
 ```
 
@@ -92,20 +92,9 @@ Format as following:
 - `Map<String,Set<String>> edges` (where key=vertex, value=Set of possible matched vertices)
 - Edges are undirected. If vertex1 is connected to vertex8 than vertex 8 is automatically connected to vertex1.
 
-Use `getMatching()` to return a Set of matched vertices:
+Use `getMatching()` to return a Map of matched vertices:
 
-- `String vertex1:vertex2`
-
-To Parse:
-
-```
- Set<String> matches = matching.getMatching();
- for (String match : matches) {
-           List<String> vertices = match.split(':', 2);
-           String vertice1 = vertices[0];
-           String vertice2 = vertices[1];
-   }
-```
+- `Map<String,String> key(partition1)=>value(partition2)`
 
 ## Linceses
 

@@ -50,13 +50,10 @@ public with sharing class HopcroftKarpBipartiteMatchingTest {
     );
 
     // Return Set of mathed vertices using H-K Algorithm
-    Set<String> matches = alg.getMatching();
-    for (String edge : matches) {
-      if (edge != null) {
-        String[] vertexs = edge.split(':', 2);
-        partition2.remove(vertexs[0]);
-        partition1.remove(vertexs[1]);
-      }
+    Map<String, String> matches = alg.getMatching();
+    for (String vertex : matches.keySet()) {
+      partition2.remove(vertex);
+      partition1.remove(matches.get(vertex));
     }
 
     System.debug('=== Unmatched Subscriptions ===');
@@ -68,9 +65,11 @@ public with sharing class HopcroftKarpBipartiteMatchingTest {
     System.debug(partition2);
 
     System.debug('=== Matched ===');
-    System.assert(true, matches.contains('Emily:seven'));
-    for (String match : matches) {
-      System.debug('Matched: ' + match);
+    System.assert(true, matches.containsKey('Emily'));
+    System.assertEquals('seven', matches.get('Emily'));
+
+    for (String match : matches.keySet()) {
+      System.debug('Matched: ' + match + '--' + matches.get(match));
     }
   }
 }

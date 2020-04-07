@@ -74,10 +74,10 @@ public class HopcroftKarpBipartiteMatching {
   /**
    * This method uses the Hopcroft-Karp matching algorithm to return a
    * matches with maximal cardinality.
-   * @return Set<String> 'value:value' --> a concatenation of 2 vertices
-   * @param edges
+   * @return Map<String,String> key(partition1)=>value(partition2)
+   *
    */
-  public virtual Set<String> getMatching() {
+  public virtual Map<String, String> getMatching() {
     this.init();
     this.warmStart();
 
@@ -97,27 +97,21 @@ public class HopcroftKarpBipartiteMatching {
     }
     system.assert(matchedVertices <= partition1.size());
 
-    Set<String> edges = new Set<String>();
+    Map<String, String> edges = new Map<String, String>();
     for (Integer i = 0; i < vertices.size(); i++) {
-      if (matching[i] != DUMMY) {
-        edges.add(getEdge(vertices.get(i), vertices.get(matching[i])));
+      Boolean isEdge = edgeSet.contains(
+        vertices.get(i) +
+        ':' +
+        vertices.get(matching[i])
+      );
+      if (matching[i] != DUMMY && isEdge) {
+        edges.put(vertices.get(i), vertices.get(matching[i]));
       }
     }
     return edges;
   }
 
   //MultiGraph Methods
-  private String getEdge(String sourceVertex, String targetVertex) {
-    if (
-      vertexMap.containsKey(sourceVertex) && vertexMap.containsKey(targetVertex)
-    ) {
-      if (edgeSet.contains(sourceVertex + ':' + targetVertex)) {
-        return sourceVertex + ':' + targetVertex;
-      }
-    }
-    return null;
-  }
-
   private void addEdge(String sourceVertex, String targetVertex) {
     assertVertexExist(sourceVertex);
     assertVertexExist(targetVertex);
