@@ -7,7 +7,7 @@ public with sharing class TempTests {
   @isTest
   private static void testSimple() {
 
-
+    // Map key = item, value = number of items
     Map<String, Integer> inventory = new Map<String, Integer> ();
       inventory.put('one', 1);
       inventory.put('two', 1);
@@ -17,7 +17,7 @@ public with sharing class TempTests {
       inventory.put('six', 1);
       inventory.put('seven', 1);
         
-
+    // Map key = customer name, value = number of "subscriptions" or vertices/customer
     Map<String, Integer> subscriptions = new Map<String, Integer> ();
       subscriptions.put('Billy', 1);
       subscriptions.put('Emily', 1);
@@ -37,8 +37,10 @@ public with sharing class TempTests {
       subAllowedInvMap.put('Anna', new String[]{'three', 'six'});
       subAllowedInvMap.put('Raj', new String[]{'six', 'seven'});
 
+    // temporary Map key = inventory name, value = List of vertices for that item in id format ('one-0, one-1, etc')
     Map<String, String[]> inventoryClonedVertex = new Map<String, String[]>();
 
+    // Creates a vertex for every piece of inventory and adds it to a Set
     Set<String> inventorySet = new Set<String>();
     for(String invKey : inventory.keySet()){
       Integer bundles = inventory.get(invKey);
@@ -53,7 +55,7 @@ public with sharing class TempTests {
 
     Integer edgeCount = 0;
     Map<String, Set<String>> edges = new Map<String, Set<String>>();
-    //create a vertex to represent each 'bundle' of inventory purchased. 
+    //create a vertex to represent each 'bundle' of inventory purchased and add it to a Set
     Set<String> subscriptionSet = new Set<String>();
     for(String subKey : subscriptions.keySet()){
       Integer bundles = subscriptions.get(subKey);
@@ -75,7 +77,6 @@ public with sharing class TempTests {
         }
         edges.put(subId, new Set<String>(invVertices));
       }
-
     }
 
     Integer stopTime = Limits.getCpuTime();
@@ -85,6 +86,8 @@ public with sharing class TempTests {
     System.debug('Edge Count: ' + edgeCount);
 
     System.debug('Running Matching...');
+
+    // Creates new instance of HKPM with parameters (Set<partition1>, Set<partition1>, Map<vertex, Set<possibleVertices>>)  )
     HopcroftKarpBipartiteMatching alg = new HopcroftKarpBipartiteMatching(subscriptionSet, inventorySet, edges);
 
     System.assert(alg.containsVertex('Billy-0'));
@@ -92,6 +95,7 @@ public with sharing class TempTests {
     System.assert(alg.containsVertex('John-0'));
     System.assert(alg.containsVertex('Luke-0'));
 
+    // Return Set of mathed vertices using H-K Algorithm
     Set<String> matches = alg.getMatching();
     for(String edge : matches){
       if (edge != null) {
