@@ -15,7 +15,7 @@ a set of matched values from the two partitions with getMatching();
 - each vertex should be in one of two disjoint sets such as:  
 `Set<String> partition1` and `Set<String> partition2`
 
-- possible edges should be constructed to show any possible edge between the two disjoint sets. Format as following:
+- edges should be constructed to show any possible edge between the two disjoint sets. Format as following:
 `Map<String,Set<String>> edges` (where key=vertex, value=Set of possible matched vertices)
 
 - HopcroftKarpBipartiteMatching should be initliazed with parameters `Set<String> partition1`, `Set<String> partition2`, `Map<String,Set<String>> edges`
