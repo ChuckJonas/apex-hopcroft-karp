@@ -21,8 +21,18 @@ For more information:
 ## Usage
 
 ```
-// Partition 1 of disjoint sets (Menu items available => one each)
+// Partition 2 of disjoint sets (Hungry People)
     Set<String> partition1 = new Set<String>();
+    partition2.add('Billy');
+    partition2.add('Emily');
+    partition2.add('John');
+    partition2.add('Luke');
+    partition2.add('Timothy');
+    partition2.add('Anna');
+    partition2.add('Raj');
+
+// Partition 1 of disjoint sets (Menu items available => one each)
+    Set<String> partition2 = new Set<String>();
     partition1.add('tacos');
     partition1.add('pizza');
     partition1.add('chili');
@@ -31,15 +41,6 @@ For more information:
     partition1.add('wrap');
     partition1.add('steak');
 
-    // Partition 2 of disjoint sets (Hungry People)
-    Set<String> partition2 = new Set<String>();
-    partition2.add('Billy');
-    partition2.add('Emily');
-    partition2.add('John');
-    partition2.add('Luke');
-    partition2.add('Timothy');
-    partition2.add('Anna');
-    partition2.add('Raj');
 
     //Matchings allowed (Favorite menu items of hungry people)
     Map<String, Set<String>> possibleEdges = new Map<String, Set<String>>();
@@ -53,8 +54,8 @@ For more information:
 
     //Set up matching
     HopcroftKarpBipartiteMatching matching = new HopcroftKarpBipartiteMatching(
-        partition2,
         partition1,
+        partition2,
         possibleEdges
         );
 
@@ -89,10 +90,22 @@ Edges should be constructed to show any possible edge between the two disjoint s
 Format as following:
 
 - `Map<String,Set<String>> edges` (where key=vertex, value=Set of possible matched vertices)
+- Edges are undirected. If vertex1 is connected to vertex8 than vertex 8 is automatically connected to vertex1.
 
 Use `getMatching()` to return a Set of matched vertices:
 
 - `String vertex1:vertex2`
+
+To Parse:
+
+```
+ Set<String> matches = matching.getMatching();
+ for (String match : matches) {
+           List<String> vertices = match.split(':', 2);
+           String vertice1 = vertices[0];
+           String vertice2 = vertices[1];
+   }
+```
 
 ## Linceses
 
