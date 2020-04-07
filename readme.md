@@ -7,7 +7,7 @@ a set of matched values from the two partitions with getMatching();
 
 ## Install
 
-How to get it in the org? ----->>>>> I have no idea
+- How to get it in the org? ----->>>>> I have no idea
 
 ## Usage
 - all vertex and edge values are of String type
@@ -22,8 +22,12 @@ How to get it in the org? ----->>>>> I have no idea
 
 - use `getMatching()` to return a Set of matched vertices in form `String vertex1:vertex2`
 
+- use `getEdge(String vertex, String vertex)` to return a known edge in String format `vertex1:vertex1`
+    - used for testing
+- use `containsVertex(String vertex)` to return a boolean
+    - used for testing
 ## Linceses
 
-This work was dervived from JGraphT which is authored by Joris Kinable et al
+- This work was dervived from JGraphT which is authored by Joris Kinable et al
 
-GNU2.1
+- GNU2.1
