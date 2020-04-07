@@ -35,6 +35,13 @@ public class HopcroftKarpBipartiteMatching {
   private Set<String> edgeSet;
   private Map<String, Set<String>> vertexMap;
 
+  /**
+   * This constructor excepts 3 parameters and stores them in appropriate data structures
+   * @param partition1 --> Set 1 of two disjoint sets
+   * @param partition2 --> Set 2 of two disjoint sets
+   * @param edgeMap --> Map containing all possible matchings
+   */
+
   public HopcroftKarpBipartiteMatching(
     Set<String> partition1,
     Set<String> partition2,
@@ -64,7 +71,12 @@ public class HopcroftKarpBipartiteMatching {
       this.partition2 = partition1;
     }
   }
-
+  /**
+   * This method uses the Hopcroft-Karp matching algorithm to return a
+   * matches with maximal cardinality.
+   * @return Set<String> 'value:value' --> a concatenation of 2 vertices
+   * @param edges
+   */
   public virtual Set<String> getMatching() {
     this.init();
     this.warmStart();

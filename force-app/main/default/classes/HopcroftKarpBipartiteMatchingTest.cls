@@ -1,12 +1,12 @@
 @isTest
-public with sharing class TempTests {
+public with sharing class HopcroftKarpBipartiteMatchingTest {
   /*
    * Test matches name(subscriptions) with a number(inventory). Certain names can only be matched with specific
    * numbers as denoted by subAllowedInvMap. In this case, every name should be matched with a number.
    */
   @isTest
   private static void testSimple() {
-    // Map key = item, value = number of items
+    // Partition 1 of disjoint sets
     Set<String> partition1 = new Set<String>();
     partition1.add('one');
     partition1.add('two');
@@ -16,7 +16,7 @@ public with sharing class TempTests {
     partition1.add('six');
     partition1.add('seven');
 
-    // Set key = customer name, value = number of "subscriptions" or vertices/customer
+    // Partition 2 of disjoint sets
     Set<String> partition2 = new Set<String>();
     partition2.add('Billy');
     partition2.add('Emily');
