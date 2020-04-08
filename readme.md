@@ -1,4 +1,4 @@
-# Apex Hopcroft-Karp Matching
+# Apex Hopcroft-Karp
 
 ## Overview
 
@@ -14,18 +14,10 @@ This algorithm can be used to solve complex problems like resource allocation, l
 
 ## Install
 
-### A: Unlocked Package Install
-
-- via URL: [/packaging/installPackage.apexp?p0=](https://login.salesforce.com/packaging/installPackage.apexp?p0=)
-
-**OR**
-
-- via sfdx-cli: `sfdx force:package:install --wait 10 --publishwait 10 --package [TODO] --noprompt -u you@yourorg`
-
-### B: From Source
-
+1. `git clone ...`
+1. `cd ...`
 1. `sfdx force:source:convert -d deploy-package`
-2. `sfdx force:mdapi:deploy -d deploy-package -u you@yourorg -w 1000`
+1. `sfdx force:mdapi:deploy -d deploy-package -u you@yourorg -w 1000`
 
 ## Usage
 
