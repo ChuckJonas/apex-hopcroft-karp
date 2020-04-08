@@ -69,14 +69,24 @@ For more information:
 returns
 
 ```
-Matched: Billy:tacos
-Matched: Emily:steak
-Matched: John:pasta
-Matched: Luke:pizza
-Matched: Timothy:burger
-Matched: Anna:chili
-Matched: Raj:wrap
+Matched: Billy --> tacos
+Matched: Emily --> steak
+Matched: John --> pasta
+Matched: Luke --> pizza
+Matched: Timothy --> burger
+Matched: Anna --> chili
+Matched: Raj --> wrap
+Matched: tacos --> Billy
+Matched: steak --> Emily
+Matched: pasta --> John
+Matched: pizza --> Luke
+Matched: burger --> Timothy
+Matched: chili --> Anna
+Matched: wrap --> Raj
 ```
+
+Notice this returns duplicate egdes reversed. This allows for the questions "Who is having tacos?"
+and/or "What is Billy having?"
 
 All vertex and edge values are of String type
 
@@ -94,7 +104,7 @@ Format as following:
 
 Use `getMatching()` to return a Map of matched vertices:
 
-- `Map<String,String> key(partition1)=>value(partition2)`
+- return value is: `Map<String,String> key(partition1)=>value(partition2)` and the reverse
 
 ## Linceses
 
