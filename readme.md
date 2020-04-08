@@ -1,30 +1,39 @@
-# Hopcroft-Karp-Bipartite-Matching
+# Apex Hopcroft-Karp Matching
 
 ## Overview
 
 This algorithm takes an unweighted bipartite graph and returns the maximal cardinality matching as
 a Map of matched values from two partitions.
 
-### Example
-
-Say we have a menu of food items and a list of people who have chosen a list of their favorites from the menu. There is enough food to feed everyone but not if everyone chooses the first pick on their list. This algorithm will produce a map matching the people with one of their favorite foods so that the least amount of people are left out. To find who is left out, we simply subtract the people in the map from the matching Set.
-
-This same model can be used for more complex problems including impression subscriptions for advertising, allocating resources within the office, distributing sales leads, and much more.
+This algorithm can be used to solve complex problems like resource allocation, load balancing, routing and much more.
 
 ### More information:
 
-- [Introduction to the Hopcroft-Karp Algorithm](youtube.com/watch?v=lM5eIpF0xjA)
+- [Hopcroft-Karp Algorithm video](youtube.com/watch?v=lM5eIpF0xjA)
 - [Hopcroft-Karp Wikipedia](https://en.wikipedia.org/wiki/Hopcroft–Karp_algorithm)
 
 ## Install
 
-- How to get it in the org? ----->>>>> I have no idea
+### A: Unlocked Package Install
+
+- via URL: [/packaging/installPackage.apexp?p0=](https://login.salesforce.com/packaging/installPackage.apexp?p0=)
+
+**OR**
+
+- via sfdx-cli: `sfdx force:package:install --wait 10 --publishwait 10 --package [TODO] --noprompt -u you@yourorg`
+
+### B: From Source
+
+1. `sfdx force:source:convert -d deploy-package`
+2. `sfdx force:mdapi:deploy -d deploy-package -u you@yourorg -w 1000`
 
 ## Usage
 
+Say we have a limited number of dishes and a list of people, for who we know their favorite dishes. This algorithm will match the people with one of their favorite foods so that the least amount of people are left out.
+
 ```java
-// Partition 2 of disjoint sets (Hungry People)
-    Set<String> partition1 = new Set<String>{
+    // Partition 2 of disjoint sets (Hungry People)
+    Set<String> people = new Set<String>{
       'Billy',
       'Emily',
       'John',
@@ -35,8 +44,8 @@ This same model can be used for more complex problems including impression subsc
       'Dustin'
     };
 
-// Partition 1 of disjoint sets (Menu items available => one each)
-    Set<String> partition2 = new Set<String>{
+    // Partition 1 of disjoint sets (Menu items available => one each)
+    Set<String> dishes = new Set<String>{
       'tacos',
       'pizza',
       'chili',
@@ -47,9 +56,8 @@ This same model can be used for more complex problems including impression subsc
       'pho'
     };
 
-
     //Matchings allowed (Favorite menu items of hungry people)
-    Map<String, Set<String>> possibleEdges = new Map<String, Set<String>>{
+    Map<String, Set<String>> favoriteDishes = new Map<String, Set<String>>{
       'Billy' => new Set<String>{ 'tacos', 'pasta' },
       'Emily' => new Set<String>{ 'steak', 'chili', 'wrap' },
       'John' => new Set<String>{ 'pizza', 'burger', 'pasta' },
@@ -60,47 +68,18 @@ This same model can be used for more complex problems including impression subsc
       'Dustin' => new Set<String>{ 'steak' }
     };
 
-    //Set up matching
-    HopcroftKarpBipartiteMatching matching = new HopcroftKarpBipartiteMatching(
-        partition1,
-        partition2,
-        possibleEdges
-        );
+    HopcroftKarpBipartiteMatching alg = new HopcroftKarpBipartiteMatching(
+      people,
+      dishes,
+      favoriteDishes
+    );
 
-    //Map<String,String> matches stores each matching made
-    Map<String,String> matches = matching.getMatching();
-    System.debug('=== Matched ===');
-    System.assert(true, matches.containsKey('Emily'));
-    System.assertEquals('steak', matches.get('Emily'));
+    Map<String, String> matches = alg.getMatching();
 
-    for (String match : matches.keySet()) {
-      if (partition1.contains(match)) {
-        System.debug(match + ' will have ' + matches.get(match));
-      } else {
-          System.debug('People having ' + match.capitalize() + ': ' + matches.get(match));
-      }
-    }
-
-    //Remove matched from partition list
-    for (String vertex : matches.keySet()) {
-      partition1.remove(vertex);
-      partition2.remove(matches.get(vertex));
-    }
-
-    System.debug('=== Unmatched People ===');
-    System.assertEquals(1, partition1.size());
-    for (String person : partition1) {
-      System.debug(('No dish left for ' + person));
-    }
-
-    System.debug('=== Unmatched Food ===');
-    System.assertEquals(1, partition2.size());
-    for (String food : partition2) {
-      System.debug('No one is having ' + food.capitalize());
-    }
+    printMatches(matches); //see HopcroftKarpBipartiteMatchingTest for example
 ```
 
-returns
+**Results**
 
 ```
 === Matched ===
@@ -111,51 +90,59 @@ Luke will have pizza
 Timothy will have burger
 Anna will have chili
 Raj will have wrap
-People having Tacos: Billy
-People having Steak: Emily
-People having Pasta: John
-People having Pizza: Luke
-People having Burger: Timothy
-People having Chili: Anna
-People having Wrap: Raj
 
 === Unmatched People ===
 No dish left for Dustin
+
 === Unmatched Food ===
 No one is having Pho
 
 ```
 
-**Implementation Considerations:**
+As you may have noticed, this isn't the most realistic example. It's more likely we have a limited quantity of each dish (instead of just one of each).
 
-- All vertex and edge values are of String type
+However, the implementation is still the same. We just create a vertex for each unit.
 
-- Edges are undirected. If vertex1 is connected to vertex8 than vertex 8 is automatically connected to vertex1.
+For example, if we had enough to make 3 tacos, we would just need to create 3 unique vertex to represent these items:
 
-- return value is: `Map<String,String> key(partition1)=>value(partition2)` and the reverse
+```java
 
-## Performance
+Set<String> dishes = new Set<String>{
+    'tacos-0',
+    'tacos-1',
+    'tacos-2'
+    //... continue with other dishes
+};
+```
 
-Needless to say, Apex is not the ideal enviroment for any operation that require heavy processing. Both the HEAP and CPU TIMEOUT limits are likely to come into play with sufficiently large graphs.
+Then in our `favoriteDishes`, anyone who likes tacos, would get an edge to each of these items:
+
+```java
+'Billy' => new Set<String>{ 'tacos-0', 'tacos-1', 'tacos-3', 'pasta-0'},
+```
+
+_WARNING: With these types of problems, the edge count can quickly ballon. See Performance section below._
+
+### Implementation Considerations
+
+- All vertex and edge values are of `String` type and case sensitive.
+
+- Edges are undirected. If `vertex1` is connected to `vertex8`, than `vertex 8` is automatically connected to `vertex1`.
+
+#### Performance
+
+Needless to say, Apex is not the ideal environment for any operation that require heavy processing. Both the HEAP and CPU TIMEOUT limits are likely to come into play with sufficiently large graphs.
 
 In our testing we've found that we can handle a couple thousand of vertices with over 300,000 edges.
 
-In practical application, this will likely be significantly reduced by the functionality required to setup the graph and what you do with the results.
+In practical application, this will likely be significantly reduced by processing to setup the graph and what you do with the results.
 
-We recommend building the graph partitions and edge sets, then pass them into a @Future method which can run the matching and handle the result.
+We recommend building the partitions and edge sets, then passing them into a `@future` method which can run the matching and handle the result.
 
-To reduce the heap size, we suggest using the shortest possible vertice names.
+To reduce the heap size, we suggest using the shortest possible vertex names. Instead of `tacos-0, tacos-1, tacos-2`, create id aliases `0-1, 0-2, 1-1, 1-2`.
 
-```
-`Cheeseburger-1, Cheeseburger-2, Pizza-1, Pizza-2`
-                    vs
-            `0-1, 0-2, 1-1, 1-2`
-```
+## License
 
-## Linceses
+This work was derived heavily from [JGraphT](https://jgrapht.org) (C) Copyright 2017-2020, by Joris Kinable and Contributors.
 
-- This work was dervived from JGraphT which is authored by Joris Kinable et al
-
-  - [JGraphT](https://jgrapht.org)
-
-- GNU2.1
+It is released under the Eclipse Public License - v 2.0 license.

@@ -1,6 +1,9 @@
 /*
  * @author Chuck Jonas and Dustin Kovac
- * Derived from Joris Kinable
+ *
+ * Derived from: JGraphT
+ * (C) Copyright 2017-2020, by Joris Kinable and Contributors.
+ * https://github.com/jgrapht
  */
 public class HopcroftKarpBipartiteMatching {
   private Set<String> partition1;
@@ -37,11 +40,10 @@ public class HopcroftKarpBipartiteMatching {
 
   /**
    * This constructor excepts 3 parameters and stores them in appropriate data structures
-   * @param partition1 --> Set 1 of two disjoint sets
-   * @param partition2 --> Set 2 of two disjoint sets
-   * @param edgeMap --> Map containing all possible matchings
+   * @param partition1 Set 1 of two disjoint sets
+   * @param partition2 Set 2 of two disjoint sets
+   * @param edgeMap    Map containing all possible matchings. Edges are undirected (you only need to include one direction)
    */
-
   public HopcroftKarpBipartiteMatching(
     Set<String> partition1,
     Set<String> partition2,
@@ -71,11 +73,11 @@ public class HopcroftKarpBipartiteMatching {
       this.partition2 = partition1;
     }
   }
+
   /**
    * This method uses the Hopcroft-Karp matching algorithm to return a
    * matches with maximal cardinality.
-   * @return Map<String,String> key(partition1)=>value(partition2)
-   *
+   * @return Map<String,String> of all matches (include vertices from both partitions)
    */
   public virtual Map<String, String> getMatching() {
     this.init();
@@ -88,12 +90,15 @@ public class HopcroftKarpBipartiteMatching {
         v <= partition1.size() &&
         matchedVertices < partition1.size();
         v++
-      )
+      ) {
         if (
           matching[v] == DUMMY // v is unmatched
-        )
-          if (dfs(v))
+        ) {
+          if (dfs(v)) {
             matchedVertices++;
+          }
+        }
+      }
     }
     system.assert(matchedVertices <= partition1.size());
 
@@ -104,6 +109,41 @@ public class HopcroftKarpBipartiteMatching {
       }
     }
     return edges;
+  }
+
+  /**
+   * Initialize data structures
+   */
+  private void init() {
+    vertices = new List<String>();
+    vertices.add(null);
+    vertices.addAll(partition1);
+    vertices.addAll(partition2);
+    vertexIndexMap = new Map<String, Integer>();
+    for (Integer i = 0; i < vertices.size(); i++)
+      vertexIndexMap.put(vertices.get(i), i);
+
+    matching = initializeFixedIntArray(vertices.size() + 1);
+    dist = initializeFixedIntArray(partition1.size() + 1);
+    queue = new Queue(vertices.size());
+  }
+
+  /**
+   * Greedily compute an initial feasible matching
+   */
+  private void warmStart() {
+    for (String uOrig : partition1) {
+      Integer u = vertexIndexMap.get(uOrig);
+      for (String vOrig : neighborListOf(uOrig)) {
+        Integer v = vertexIndexMap.get(vOrig);
+        if (matching[v] == DUMMY) {
+          matching[v] = u;
+          matching[u] = v;
+          matchedVertices++;
+          break;
+        }
+      }
+    }
   }
 
   //MultiGraph Methods
@@ -161,41 +201,6 @@ public class HopcroftKarpBipartiteMatching {
     }
   }
 
-  /**
-   * Initialize data structures
-   */
-  private void init() {
-    vertices = new List<String>();
-    vertices.add(null);
-    vertices.addAll(partition1);
-    vertices.addAll(partition2);
-    vertexIndexMap = new Map<String, Integer>();
-    for (Integer i = 0; i < vertices.size(); i++)
-      vertexIndexMap.put(vertices.get(i), i);
-
-    matching = initializeFixedIntArray(vertices.size() + 1);
-    dist = initializeFixedIntArray(partition1.size() + 1);
-    queue = new Queue(vertices.size());
-  }
-
-  /**
-   * Greedily compute an initial feasible matching
-   */
-  private void warmStart() {
-    for (String uOrig : partition1) {
-      Integer u = vertexIndexMap.get(uOrig);
-      for (String vOrig : neighborListOf(uOrig)) {
-        Integer v = vertexIndexMap.get(vOrig);
-        if (matching[v] == DUMMY) {
-          matching[v] = u;
-          matching[u] = v;
-          matchedVertices++;
-          break;
-        }
-      }
-    }
-  }
-
   //Breadth-First Search Algorithm
   private boolean bfs() {
     queue.clear();
@@ -245,6 +250,15 @@ public class HopcroftKarpBipartiteMatching {
     return true;
   }
 
+  //Initializes fixed length list
+  private static Integer[] initializeFixedIntArray(Integer len) {
+    Integer[] iArr = new List<Integer>(len);
+    for (Integer i = 0; i < len; i++) {
+      iArr[i] = 0;
+    }
+    return iArr;
+  }
+
   //Constructs a fixed sixed queue
   private class Queue {
     private List<Integer> ls;
@@ -291,14 +305,5 @@ public class HopcroftKarpBipartiteMatching {
     public void addAll(List<Integer> neighbors) {
       ls.addAll(neighbors);
     }
-  }
-
-  //Initializes fixed length list
-  private static Integer[] initializeFixedIntArray(Integer len) {
-    Integer[] iArr = new List<Integer>(len);
-    for (Integer i = 0; i < len; i++) {
-      iArr[i] = 0;
-    }
-    return iArr;
   }
 }
