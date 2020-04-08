@@ -99,12 +99,7 @@ public class HopcroftKarpBipartiteMatching {
 
     Map<String, String> edges = new Map<String, String>();
     for (Integer i = 0; i < vertices.size(); i++) {
-      Boolean isEdge = edgeSet.contains(
-        vertices.get(i) +
-        ':' +
-        vertices.get(matching[i])
-      );
-      if (matching[i] != DUMMY && isEdge) {
+      if (matching[i] != DUMMY) {
         edges.put(vertices.get(i), vertices.get(matching[i]));
       }
     }
