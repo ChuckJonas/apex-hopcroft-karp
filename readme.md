@@ -7,7 +7,7 @@ a Map of matched values from two partitions.
 
 ### Example
 
-Say we have a menu of food items and a list of people who have chosen a list of their favorites from the menu. There is enough food to feed everyone but not if everyone chooses the first pick on their list. This algorithm will produce a list matching the people with one of their favorite foods so that the least amount of people are left out. To find who is left out, we simply subtract the people from the matching Set.
+Say we have a menu of food items and a list of people who have chosen a list of their favorites from the menu. There is enough food to feed everyone but not if everyone chooses the first pick on their list. This algorithm will produce a map matching the people with one of their favorite foods so that the least amount of people are left out. To find who is left out, we simply subtract the people in the map from the matching Set.
 
 This same model can be used for more complex problems including impression subscriptions for advertising, allocating resources within the office, distributing sales leads, and much more.
 
@@ -138,11 +138,19 @@ No one is having Pho
 
 Needless to say, Apex is not the ideal enviroment for any operation that require heavy processing. Both the HEAP and CPU TIMEOUT limits are likely to come into play with sufficiently large graphs.
 
-In our testing we've found that we can handle hundreds of vertices with hundreds of thousands of edges.
+In our testing we've found that we can handle a couple thousand of vertices with over 300,000 edges.
 
-In Practical application, this will likely be significantly reduced by the functionality required to setup the graph and what you do with the results.
+In practical application, this will likely be significantly reduced by the functionality required to setup the graph and what you do with the results.
 
 We recommend building the graph partitions and edge sets, then pass them into a @Future method which can run the matching and handle the result.
+
+To reduce the heap size, we suggest using the shortest possible vertice names.
+
+```
+`Cheeseburger-1, Cheeseburger-2, Pizza-1, Pizza-2`
+                    vs
+            `0-1, 0-2, 1-1, 1-2`
+```
 
 ## Linceses
 

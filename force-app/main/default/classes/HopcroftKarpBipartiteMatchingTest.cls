@@ -98,7 +98,7 @@ public with sharing class HopcroftKarpBipartiteMatchingTest {
   private static void testOptimized() {
     Integer startingHeap = Limits.getHeapSize();
 
-    Integer scaler = 50;
+    Integer scaler = 43;
 
     System.debug('Optimized Test with scaler of ' + scaler);
 
