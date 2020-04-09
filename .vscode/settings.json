@@ -9,6 +9,7 @@
   "editor.formatOnSave": true,
   "prettier.printWidth": 100,
   "cSpell.words": [
+    "Hopcroft",
     "Karp"
   ]
 }

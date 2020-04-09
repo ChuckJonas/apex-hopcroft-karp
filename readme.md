@@ -1,25 +1,25 @@
 # Apex Hopcroft-Karp
 
-## Overview
+## ✨ Overview
 
 This algorithm takes an unweighted bipartite graph and returns the maximal cardinality matching as
 a Map of matched values from two partitions.
 
 It can be used to solve complex problems like resource allocation, load balancing, routing and much more.
 
-### More information:
+### 🔗 More information on Hopcroft-Karp
 
 - [Hopcroft-Karp Algorithm video](youtube.com/watch?v=lM5eIpF0xjA)
 - [Hopcroft-Karp Wikipedia](https://en.wikipedia.org/wiki/Hopcroft–Karp_algorithm)
 
-## Install
+## 📦 Install
 
 1. `git clone ...`
 1. `cd ...`
 1. `sfdx force:source:convert -d deploy-package`
 1. `sfdx force:mdapi:deploy -d deploy-package -u you@yourorg -w 1000`
 
-## Usage
+## 🔨 Usage
 
 ### Simple Matching Example
 
@@ -137,7 +137,7 @@ For this we can use the `ExpandedHopcroftKarpBipartiteMatching` class:
     printResults(results) //see test
 ```
 
-** Results **
+**Results**
 
 ```
 steak will be had by Billy(2), Luke(1)
@@ -186,8 +186,8 @@ In practical application, there will likely be significant overhead in both the 
 
 - For Resource Allocation problems, always scale your "units" to the lowest acceptable resolution. For example, you may have `600` ounces of steak, but since each serving size is `5 ounce`, you'd only want to set up the graph with `120` "units".
 
-## License
+## 📃 License
+
+This work is dual-licensed under [LGPL 2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html) and [EPL 2.0](https://www.eclipse.org/legal/epl-2.0/). As a recipient, you may choose which license to receive the code under.
 
 This work was derived heavily from [JGraphT](https://jgrapht.org) (C) Copyright 2017-2020, by Joris Kinable and Contributors.
-
-It is released under the Eclipse Public License - v 2.0 license.
