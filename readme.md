@@ -2,10 +2,9 @@
 
 ## ✨ Overview
 
-This algorithm takes an unweighted bipartite graph and returns the maximal cardinality matching as
-a Map of matched values from two partitions.
+This algorithm takes an unweighted bipartite graph and returns the maximal cardinality matching of the two partitions.
 
-It can be used to solve complex problems like resource allocation, load balancing, routing and much more.
+In theory, it can be used to solve complex problems like resource allocation, load balancing, routing and much more.
 
 ### 🔗 More information on Hopcroft-Karp
 
