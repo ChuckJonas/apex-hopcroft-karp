@@ -1,6 +1,7 @@
 /**
  * Class that make it easy to use the H-K matching to run "Resource Allocation" matching.
  *   Each vertex gets an integer which represents the number of times it can be matched.
+ *   NOTE: Optimized for "developer friendly-ness".  Not optimal performance.
  * @Author: Charlie Jonas (charlie@callaway.cloud)
  */
 public class ExpandedHopcroftKarpBipartiteMatching {

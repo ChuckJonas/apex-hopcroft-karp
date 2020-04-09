@@ -134,4 +134,99 @@ public class HopcroftKarpBipartiteMatchingTest {
       System.debug(s + ' was unmatched ' + result.unmatched.get(s) + ' times');
     }
   }
+
+  @isTest
+  private static void performanceTest() {
+    Integer startingHeap = Limits.getHeapSize();
+
+    Integer scaler = 20; // change this to scale test
+
+    Map<String, Integer> subscriptions = new Map<String, Integer>{
+      'acme' => 2 * scaler,
+      'stark' => 2 * scaler,
+      'bell' => 2 * scaler,
+      'facebook' => 3 * scaler,
+      'google' => 5 * scaler,
+      'microsoft' => 7 * scaler,
+      'apple' => 1 * scaler,
+      'salesforce' => 2 * scaler
+    };
+
+    Map<String, Integer> inventory = new Map<String, Integer>{
+      'javascript' => 2 * scaler,
+      'typescript' => 3 * scaler,
+      'react' => 3 * scaler,
+      'nextjs' => 3 * scaler,
+      'java' => 3 * scaler,
+      'python' => 5 * scaler,
+      'apex' => 3 * scaler,
+      'angular' => 1 * scaler,
+      'webpack' => 2 * scaler,
+      'php' => 1 * scaler,
+      'ruby' => 5 * scaler,
+      'xml' => 7 * scaler
+    };
+
+    Map<String, Set<String>> subAllowedInvMap = new Map<String, Set<String>>{
+      'acme' => new Set<String>{ 'javascript', 'typescript' },
+      'stark' => new Set<String>{ 'javascript', 'typescript' },
+      'bell' => new Set<String>{ 'javascript' },
+      'facebook' => new Set<String>{
+        'javascript',
+        'typescript',
+        'react',
+        'nextjs'
+      },
+      'google' => new Set<String>{ 'typescript', 'angular', 'webpack' },
+      'microsoft' => new Set<String>{ 'php', 'ruby', 'angular', 'webpack' },
+      'apple' => new Set<String>{ 'javascript', 'xml', 'python', 'nextjs' },
+      'salesforce' => new Set<String>{ 'apex', 'java', 'python' }
+    };
+
+    System.debug('Setting Up Graph...');
+    Integer startTime = Limits.getCpuTime();
+
+    ExpandedHopcroftKarpBipartiteMatching alg = new ExpandedHopcroftKarpBipartiteMatching(
+      subscriptions,
+      inventory,
+      subAllowedInvMap
+    );
+
+    Integer graphHeap = Limits.getHeapSize() - startingHeap;
+
+    Integer stopTime = Limits.getCpuTime();
+    System.debug('Finished! ' + (stopTime - startTime) + 'ms');
+    System.debug('Graph Heap: ' + (graphHeap - startingHeap));
+
+    System.debug('Running Matching...');
+    startTime = Limits.getCpuTime();
+
+    ExpandedHopcroftKarpBipartiteMatching.Result result = alg.getMatching();
+
+    stopTime = Limits.getCpuTime();
+    System.debug('Finished! ' + (stopTime - startTime) + 'ms');
+    System.debug(
+      'Remaining Heap: ' + (Limits.getLimitHeapSize() - Limits.getHeapSize())
+    );
+
+    Map<String, Map<String, Integer>> matches = result.matches;
+    for (String vertex : matches.keySet()) {
+      if (inventory.containsKey(vertex)) {
+        Map<String, Integer> peopleMatches = matches.get(vertex);
+        String[] peopleOutput = new List<String>{};
+        for (String person : peopleMatches.keySet()) {
+          peopleOutput.add(person + '(' + peopleMatches.get(person) + ')');
+        }
+        System.debug(
+          vertex +
+          ' will be had by ' +
+          String.join(peopleOutput, ', ')
+        );
+      }
+    }
+
+    for (String s : result.unmatched.keySet()) {
+      System.debug(s + ' was unmatched ' + result.unmatched.get(s) + ' times');
+    }
+  }
 }
