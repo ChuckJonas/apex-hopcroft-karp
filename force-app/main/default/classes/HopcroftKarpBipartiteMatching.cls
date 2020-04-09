@@ -1,5 +1,5 @@
 /*
- * @author Chuck Jonas and Dustin Kovac
+ * @author Chuck Jonas (charlie@callaway.cloud) and Dustin Kovac
  *
  * Derived from: JGraphT
  * (C) Copyright 2017-2020, by Joris Kinable and Contributors.
@@ -39,7 +39,7 @@ public class HopcroftKarpBipartiteMatching {
   private Map<String, Set<String>> vertexMap;
 
   /**
-   * This constructor excepts 3 parameters and stores them in appropriate data structures
+   * Constructor
    * @param partition1 Set 1 of two disjoint sets
    * @param partition2 Set 2 of two disjoint sets
    * @param edgeMap    Map containing all possible matchings. Edges are undirected (you only need to include one direction)

@@ -1,12 +1,12 @@
 @isTest
-public with sharing class HopcroftKarpBipartiteMatchingTest {
+public class HopcroftKarpBipartiteMatchingTest {
   /*
-   * Test matches people with a Dish. Certain people can only be matched with specific
-   * dishes as denoted by favoriteDishes. In this case, every name should be matched with a number.
+   * Test matches people with a chore. Certain people can only be matched with specific
+   * tasks as denoted by preferredTasks
    */
   @isTest
   private static void testSimple() {
-    // Partition 2 of disjoint sets (Hungry People)
+    // Partition 1 of disjoint sets (people)
     Set<String> people = new Set<String>{
       'Billy',
       'Emily',
@@ -18,71 +18,120 @@ public with sharing class HopcroftKarpBipartiteMatchingTest {
       'Dustin'
     };
 
-    // Partition 1 of disjoint sets (Menu items available => one each)
-    Set<String> dishes = new Set<String>{
-      'tacos',
-      'pizza',
-      'chili',
-      'pasta',
-      'burger',
-      'wrap',
-      'steak',
-      'pho'
+    // Partition 2 of disjoint sets (chores)
+    Set<String> tasks = new Set<String>{
+      'wash dishes',
+      'vacuum',
+      'do laundry',
+      'sweep',
+      'mop',
+      'dust',
+      'iron',
+      'take out trash'
     };
 
-    //Matchings allowed (Favorite menu items of hungry people)
-    Map<String, Set<String>> favoriteDishes = new Map<String, Set<String>>{
-      'Billy' => new Set<String>{ 'tacos', 'pasta' },
-      'Emily' => new Set<String>{ 'steak', 'chili', 'wrap' },
-      'John' => new Set<String>{ 'pizza', 'burger', 'pasta' },
-      'Luke' => new Set<String>{ 'steak', 'pizza' },
-      'Timothy' => new Set<String>{ 'steak', 'wrap', 'burger' },
-      'Anna' => new Set<String>{ 'chili', 'wrap' },
-      'Raj' => new Set<String>{ 'wrap', 'steak' },
-      'Dustin' => new Set<String>{ 'steak' }
+    //Allowed Matchings
+    Map<String, Set<String>> preferredTasks = new Map<String, Set<String>>{
+      'Billy' => new Set<String>{ 'wash dishes', 'sweep' },
+      'Emily' => new Set<String>{ 'iron', 'do laundry', 'dust' },
+      'John' => new Set<String>{ 'vacuum', 'mop', 'sweep' },
+      'Luke' => new Set<String>{ 'iron', 'vacuum', 'take out trash' },
+      'Timothy' => new Set<String>{ 'iron', 'dust', 'mop' },
+      'Anna' => new Set<String>{ 'do laundry', 'dust' },
+      'Raj' => new Set<String>{ 'dust', 'iron' },
+      'Dustin' => new Set<String>{ 'take out trash' }
     };
-
-    Integer stopTime = Limits.getCpuTime();
-    System.debug('Inventory Vertex Count: ' + people.size());
-    System.debug('Subscription Vertex Count: ' + dishes.size());
-
-    System.debug('Running Matching...');
 
     HopcroftKarpBipartiteMatching alg = new HopcroftKarpBipartiteMatching(
       people,
-      dishes,
-      favoriteDishes
+      tasks,
+      preferredTasks
     );
 
     // Return Set of matched vertices using H-K Algorithm
     Map<String, String> matches = alg.getMatching();
 
-    System.debug('=== Matched ===');
     System.assert(true, matches.containsKey('Emily'));
-    System.assertEquals('steak', matches.get('Emily'));
+    System.assertEquals('iron', matches.get('Emily'));
 
+    //handle results
     for (String vertex : matches.keySet()) {
       if (people.contains(vertex)) {
-        System.debug(vertex + ' will have ' + matches.get(vertex));
+        System.debug(vertex + ' will ' + matches.get(vertex));
+        people.remove(vertex);
+        continue;
+      }
+      tasks.remove(vertex);
+    }
+
+    System.assertEquals(0, people.size());
+    System.assertEquals(0, tasks.size());
+  }
+
+  /**
+   * Test ExpandedHopcroftKarpBipartiteMatching
+   */
+  @isTest
+  private static void testResourceAllocation() {
+    // Partition 2 of disjoint sets (Hungry People)
+    Map<String, Integer> people = new Map<String, Integer>{
+      'Billy' => 2, //bill is a hungry boy. eats two wash dishes
+      'Emily' => 1,
+      'John' => 1,
+      'Luke' => 1,
+      'Timothy' => 1,
+      'Anna' => 1,
+      'Raj' => 1,
+      'Dustin' => 1
+    };
+
+    // Partition 1 of disjoint sets (Menu items available => one each)
+    Map<String, Integer> protein = new Map<String, Integer>{
+      'steak' => 3,
+      'chicken' => 2,
+      'fish' => 2,
+      'tofu' => 1
+    };
+
+    //Matchings allowed (Favorite menu items of hungry people)
+    Map<String, Set<String>> proteinPreference = new Map<String, Set<String>>{
+      'Billy' => new Set<String>{ 'steak', 'chicken' },
+      'Emily' => new Set<String>{ 'fish', 'tofu' },
+      'John' => new Set<String>{ 'chicken', 'fish' },
+      'Luke' => new Set<String>{ 'steak' },
+      'Timothy' => new Set<String>{ 'chicken', 'fish', 'tofu' },
+      'Anna' => new Set<String>{ 'steak', 'fish' },
+      'Raj' => new Set<String>{ 'chicken' },
+      'Dustin' => new Set<String>{ 'tofu' }
+    };
+
+    ExpandedHopcroftKarpBipartiteMatching alg = new ExpandedHopcroftKarpBipartiteMatching(
+      people,
+      protein,
+      proteinPreference
+    );
+
+    // Return Set of matched vertices using H-K Algorithm
+    ExpandedHopcroftKarpBipartiteMatching.Result result = alg.getMatching();
+    Map<String, Map<String, Integer>> matches = result.matches;
+    for (String vertex : matches.keySet()) {
+      if (protein.containsKey(vertex)) {
+        Map<String, Integer> peopleMatches = matches.get(vertex);
+        String[] peopleOutput = new List<String>{};
+        for (String person : peopleMatches.keySet()) {
+          peopleOutput.add(person + '(' + peopleMatches.get(person) + ')');
+        }
+        System.debug(
+          vertex +
+          ' will be had by ' +
+          String.join(peopleOutput, ', ')
+        );
       }
     }
 
-    //Remove matched from partition lists
-    for (String vertex : matches.keySet()) {
-      people.remove(vertex);
-      dishes.remove(vertex);
-    }
-
-    System.debug('=== Unmatched People ===');
-    System.assertEquals(1, people.size());
-    for (String person : people) {
-      System.debug('No dish left for ' + person);
-    }
-
-    System.debug('=== Unmatched Food ===');
-    System.assertEquals(1, dishes.size());
-    for (String food : dishes) {
-      System.debug('No one is having ' + food.capitalize());
+    System.assertEquals(1, result.unmatched.size());
+    for (String s : result.unmatched.keySet()) {
+      System.debug(s + ' was unmatched ' + result.unmatched.get(s) + ' times');
     }
   }
 }
