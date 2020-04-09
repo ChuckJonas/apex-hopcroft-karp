@@ -89,7 +89,7 @@ Raj will dust
 Dustin will take out trash
 ```
 
-## Solving "Resource Allocation" problems
+### Solving "Resource Allocation" problems
 
 We can also use the same principle to solve resource allocation problems. Imagine we have a list of people who who each have one or more preferred protein (`beef, chicken, fish, tofu`). We want to feed everyone, but we have limited quantities of each protein.
 
